@@ -6,9 +6,9 @@
     "fetched_at": "2026-05-24T19:25:26.113572"
   },
   "lidl": {
-    "valid_from": "2026-05-21",
-    "valid_to": "2026-05-24",
-    "products_count": 8,
-    "fetched_at": "2026-05-21T17:15:07.646571"
+    "valid_from": "2026-05-25",
+    "valid_to": "2026-05-27",
+    "products_count": 7,
+    "fetched_at": "2026-05-24T19:35:01.218440"
   }
 }
