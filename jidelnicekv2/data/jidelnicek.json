@@ -1,17 +1,604 @@
 {
-  "week_start": "2026-05-24",
-  "week_end": "2026-05-30",
-  "generated_at": "2026-05-24T21:30:12.085790",
+  "week_start": "2026-05-31",
+  "week_end": "2026-06-06",
+  "generated_at": "2026-05-31T20:01:52.707711",
   "days": [
     {
       "day": "Neděle",
-      "date": "2026-05-24",
+      "date": "2026-05-31",
       "is_weekend": true,
       "meals": [
         {
           "type": "snidane",
-          "name": "Vaječná omeleta se šunkou, rajčaty a okurkou, pečivo",
+          "name": "Míchaná vejce s mini rajčaty a pšeničným pečivem",
           "source_url": null,
+          "ingredients": [
+            {
+              "name": "Vejce z podestýlkového chovu velikost M",
+              "amount": "8 ks",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 31.92
+            },
+            {
+              "name": "Rajčata mini Roma",
+              "amount": "250 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 19.9
+            },
+            {
+              "name": "Pšeničné běžné pečivo",
+              "amount": "4 ks (260 g)",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 11.6
+            },
+            {
+              "name": "Jihočeské máslo",
+              "amount": "30 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 4.79
+            },
+            {
+              "name": "Sůl",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Pepř",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            }
+          ],
+          "instructions": "Vejce rozšlehejte se solí a pepřem. Na pánvi rozehřejte máslo, přidejte nakrájená rajčata a nechte je lehce změknout. Vlijte vejce a za stálého míchání připravte míchaná vejce. Podávejte s čerstvým pečivem.",
+          "prep_minutes": 15,
+          "akce_items": [
+            "Vejce z podestýlkového chovu velikost M",
+            "Rajčata mini Roma",
+            "Pšeničné běžné pečivo",
+            "Jihočeské máslo"
+          ]
+        },
+        {
+          "type": "obed",
+          "name": "Salát s grilovaným kuřecím masem a nektarinkami",
+          "source_url": "https://restartujem.cz/blog/kvetakova-ryze-s-kurecim-masem-vecere-pri-hubnuti",
+          "ingredients": [
+            {
+              "name": "Kuřecí mix Flamengo/Merenge na gril na alu tácku",
+              "amount": "500 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 64.95
+            },
+            {
+              "name": "Nektarinky dovoz Maroko I. jakost",
+              "amount": "2 ks (cca 300 g)",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 14.97
+            },
+            {
+              "name": "Rajčata mini Roma",
+              "amount": "100 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 7.96
+            },
+            {
+              "name": "Salátové listy (mix)",
+              "amount": "200 g",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Tatarská omáčka/Majonéza/Salátová omáčka",
+              "amount": "50 ml",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 5.54
+            },
+            {
+              "name": "Olivový olej",
+              "amount": "2 lžíce",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Sůl",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Pepř",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            }
+          ],
+          "instructions": "Kuřecí maso ugrilujte nebo opečte na pánvi dozlatova. Nektarinky nakrájejte na měsíčky, rajčata na půlky. Salátové listy promíchejte s nektarinkami, rajčaty a nakrájeným kuřecím masem. Zálivku připravte z tatarské omáčky zředěné trochou vody nebo jogurtu, olivového oleje, soli a pepře. Zálivkou přelijte salát.",
+          "prep_minutes": 25,
+          "akce_items": [
+            "Kuřecí mix Flamengo/Merenge na gril na alu tácku",
+            "Nektarinky dovoz Maroko I. jakost",
+            "Rajčata mini Roma",
+            "Tatarská omáčka/Majonéza/Salátová omáčka"
+          ]
+        },
+        {
+          "type": "vecere",
+          "name": "Pečená vepřová kýta s rozmarýnovými bramborami",
+          "source_url": null,
+          "ingredients": [
+            {
+              "name": "Vepřová kýta bez kosti, v celku, vakuové balení",
+              "amount": "500 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 34.95
+            },
+            {
+              "name": "Brambory žluté rané dovoz Španělsko",
+              "amount": "800 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 17.52
+            },
+            {
+              "name": "Cibule",
+              "amount": "1 ks",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Česnek",
+              "amount": "3 stroužky",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Čerstvý rozmarýn",
+              "amount": "2 snítky",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Olivový olej",
+              "amount": "3 lžíce",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Sůl",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Pepř",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            }
+          ],
+          "instructions": "Vepřovou kýtu osolte, opepřete a potřete prolisovaným česnekem. Brambory omyjte, nakrájejte na čtvrtky a promíchejte s olivovým olejem, solí, pepřem a rozmarýnem. Na plech rozložte brambory a maso, přidejte nakrájenou cibuli. Pečte v předehřáté troubě na 180°C asi 40 minut, dokud není maso propečené a brambory zlatavé. (Doba pečení může být delší, pokud je maso v celku, pro zkrácení doby lze maso nakrájet na plátky.)",
+          "prep_minutes": 20,
+          "akce_items": [
+            "Vepřová kýta bez kosti, v celku, vakuové balení",
+            "Brambory žluté rané dovoz Španělsko"
+          ]
+        }
+      ]
+    },
+    {
+      "day": "Pondělí",
+      "date": "2026-06-01",
+      "is_weekend": false,
+      "meals": [
+        {
+          "type": "snidane",
+          "name": "Chléb s máslem, camembertem a rajčaty",
+          "source_url": null,
+          "ingredients": [
+            {
+              "name": "Pšeničné běžné pečivo",
+              "amount": "4 ks (260 g)",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 11.6
+            },
+            {
+              "name": "Jihočeské máslo",
+              "amount": "30 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 4.79
+            },
+            {
+              "name": "Camembert sýr s bílou plísní",
+              "amount": "200 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 39.8
+            },
+            {
+              "name": "Rajčata mini Roma",
+              "amount": "100 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 7.96
+            },
+            {
+              "name": "Rukola",
+              "amount": "50 g",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            }
+          ],
+          "instructions": "Pečivo namažte máslem, obložte plátky camembertu a rajčat. Přidejte čerstvou rukolu.",
+          "prep_minutes": 10,
+          "akce_items": [
+            "Pšeničné běžné pečivo",
+            "Jihočeské máslo",
+            "Camembert sýr s bílou plísní",
+            "Rajčata mini Roma"
+          ]
+        },
+        {
+          "type": "obed",
+          "name": "Rychlá krémová zeleninová polévka s vejcem a krutony",
+          "source_url": null,
+          "ingredients": [
+            {
+              "name": "Mražená zelenina (brokolice/hrášek)",
+              "amount": "500 g",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Zeleninový vývar",
+              "amount": "1 l",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Smetana na vaření",
+              "amount": "100 ml",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Vejce z podestýlkového chovu velikost M",
+              "amount": "2 ks",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 7.98
+            },
+            {
+              "name": "Pšeničné běžné pečivo",
+              "amount": "2 ks (130 g)",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 5.8
+            },
+            {
+              "name": "Jihočeské máslo",
+              "amount": "10 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 1.6
+            },
+            {
+              "name": "Sůl",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Pepř",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            }
+          ],
+          "instructions": "Zeleninu uvařte ve vývaru doměkka. Rozmixujte dohladka, zjemněte smetanou a dochuťte. Vejce uvařte natvrdo, oloupejte a nakrájejte. Pečivo nakrájejte na kostičky, opečte na másle do křupava. Polévku podávejte s vajíčkem a krutony.",
+          "prep_minutes": 25,
+          "akce_items": [
+            "Vejce z podestýlkového chovu velikost M",
+            "Pšeničné běžné pečivo",
+            "Jihočeské máslo"
+          ]
+        },
+        {
+          "type": "vecere",
+          "name": "Pečené kuřecí čtvrtky na bylinkách s pečenými bramborami",
+          "source_url": null,
+          "ingredients": [
+            {
+              "name": "Kuřecí čtvrtky zadní",
+              "amount": "1 kg",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 59.9
+            },
+            {
+              "name": "Brambory žluté rané dovoz Španělsko",
+              "amount": "600 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 13.14
+            },
+            {
+              "name": "Bylinky (tymián, oregano)",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Olivový olej",
+              "amount": "3 lžíce",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Sůl",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Pepř",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            }
+          ],
+          "instructions": "Kuřecí čtvrtky osolte, opepřete, posypte bylinkami a zakápněte olivovým olejem. Brambory omyjte, nakrájejte na klínky, osolte a promíchejte s trochou oleje. Vše rozložte na plech a pečte v předehřáté troubě na 190°C asi 35-40 minut, dokud není kuře zlatavé a brambory měkké.",
+          "prep_minutes": 20,
+          "akce_items": [
+            "Kuřecí čtvrtky zadní",
+            "Brambory žluté rané dovoz Španělsko"
+          ]
+        }
+      ]
+    },
+    {
+      "day": "Úterý",
+      "date": "2026-06-02",
+      "is_weekend": false,
+      "meals": [
+        {
+          "type": "snidane",
+          "name": "Ovesná kaše s nektarinkami a špetkou másla",
+          "source_url": null,
+          "ingredients": [
+            {
+              "name": "Ovesné vločky",
+              "amount": "200 g",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Mléko",
+              "amount": "600 ml",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Nektarinky dovoz Maroko I. jakost",
+              "amount": "2 ks (cca 300 g)",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 14.97
+            },
+            {
+              "name": "Jihočeské máslo",
+              "amount": "10 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 1.6
+            },
+            {
+              "name": "Med/javorový sirup",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            }
+          ],
+          "instructions": "Ovesné vločky uvařte v mléce doměkka. Nektarinky nakrájejte na kousky a vmíchejte do kaše. Navrch přidejte špetku másla a oslaďte medem nebo javorovým sirupem.",
+          "prep_minutes": 15,
+          "akce_items": [
+            "Nektarinky dovoz Maroko I. jakost",
+            "Jihočeské máslo"
+          ]
+        },
+        {
+          "type": "obed",
+          "name": "Těstoviny s rajčatovou omáčkou a camembertem",
+          "source_url": null,
+          "ingredients": [
+            {
+              "name": "Těstoviny (např. penne)",
+              "amount": "400 g",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Rajčata mini Roma",
+              "amount": "250 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 19.9
+            },
+            {
+              "name": "Camembert sýr s bílou plísní",
+              "amount": "100 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 19.9
+            },
+            {
+              "name": "Cibule",
+              "amount": "1 ks",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Česnek",
+              "amount": "2 stroužky",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Olivový olej",
+              "amount": "2 lžíce",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Sušená bazalka",
+              "amount": "1 lžička",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Sůl",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Pepř",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            }
+          ],
+          "instructions": "Těstoviny uvařte dle návodu. Na olivovém oleji zpěňte nakrájenou cibuli a česnek. Přidejte na poloviny nakrájená rajčata a duste asi 10 minut. Dochuťte bazalkou, solí a pepřem. Do hotové omáčky vmíchejte nakrájený camembert, aby se rozpustil. Podávejte s těstovinami.",
+          "prep_minutes": 25,
+          "akce_items": [
+            "Rajčata mini Roma",
+            "Camembert sýr s bílou plísní"
+          ]
+        },
+        {
+          "type": "vecere",
+          "name": "Vepřová plec na česneku s bramborovou kaší",
+          "source_url": null,
+          "ingredients": [
+            {
+              "name": "Vepřová plec s kůží, na pečení, vakuové balení",
+              "amount": "600 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 29.94
+            },
+            {
+              "name": "Brambory žluté rané dovoz Španělsko",
+              "amount": "800 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 17.52
+            },
+            {
+              "name": "Mléko",
+              "amount": "100 ml",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Jihočeské máslo",
+              "amount": "50 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 7.98
+            },
+            {
+              "name": "Česnek",
+              "amount": "4 stroužky",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Cibule",
+              "amount": "1 ks",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Sůl",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Pepř",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            }
+          ],
+          "instructions": "Vepřovou plec nakrájejte na plátky, osolte a opepřete. Na pánvi opečte cibuli a česnek, přidejte maso a zprudka orestujte. Podlijte trochou vody nebo vývaru a duste pod pokličkou doměkka (cca 20-30 minut). Brambory oloupejte, uvařte doměkka, sceďte a rozmačkejte s mlékem a máslem na kaši. Podávejte maso s kaší.",
+          "prep_minutes": 30,
+          "akce_items": [
+            "Vepřová plec s kůží, na pečení, vakuové balení",
+            "Brambory žluté rané dovoz Španělsko",
+            "Jihočeské máslo"
+          ]
+        }
+      ]
+    },
+    {
+      "day": "Středa",
+      "date": "2026-06-03",
+      "is_weekend": false,
+      "meals": [
+        {
+          "type": "snidane",
+          "name": "Vajíčková pomazánka s pšeničným pečivem a plátky rajčat",
+          "source_url": "https://restartujem.cz/blog/vajecno-avokadova-pomazanka",
           "ingredients": [
             {
               "name": "Vejce z podestýlkového chovu velikost M",
@@ -21,32 +608,39 @@
               "price_approx": 23.94
             },
             {
-              "name": "Kuřecí prsní šunka",
-              "amount": "60 g",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 9.95
-            },
-            {
-              "name": "Rajčata mini Roma",
-              "amount": "125 g",
+              "name": "Tatarská omáčka/Majonéza/Salátová omáčka",
+              "amount": "50 g",
               "akce": true,
               "store": "Kaufland",
-              "price_approx": 9.95
+              "price_approx": 5.54
             },
             {
-              "name": "Česká salátová okurka",
-              "amount": "0.5 ks",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 5.95
+              "name": "Hořčice",
+              "amount": "1 lžička",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Cibule (malá)",
+              "amount": "1/2 ks",
+              "akce": false,
+              "store": null,
+              "price_approx": null
             },
             {
               "name": "Pšeničné běžné pečivo",
-              "amount": "4 ks",
+              "amount": "4 ks (260 g)",
               "akce": true,
               "store": "Kaufland",
               "price_approx": 11.6
+            },
+            {
+              "name": "Rajčata mini Roma",
+              "amount": "100 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 7.96
             },
             {
               "name": "Jihočeské máslo",
@@ -54,22 +648,642 @@
               "akce": true,
               "store": "Kaufland",
               "price_approx": 3.19
+            },
+            {
+              "name": "Sůl",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Pepř",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
             }
           ],
-          "instructions": "Vejce rozšlehejte s trochou soli a pepře. Na pánvi rozehřejte máslo, vlijte vejce a nechte ztuhnout. Přidejte nakrájenou šunku, rajčata a okurku. Podávejte s pečivem.",
-          "prep_minutes": 15,
+          "instructions": "Vejce uvařte natvrdo, oloupejte a nastrouhejte. Smíchejte s majonézou (nebo bílým jogurtem pro lehčí variantu), hořčicí, najemno nakrájenou cibulí, solí a pepřem. Pečivo namažte máslem, navršte pomazánku a ozdobte plátky rajčat.",
+          "prep_minutes": 20,
           "akce_items": [
             "Vejce z podestýlkového chovu velikost M",
-            "Kuřecí prsní šunka",
-            "Rajčata mini Roma",
-            "Česká salátová okurka",
+            "Tatarská omáčka/Majonéza/Salátová omáčka",
             "Pšeničné běžné pečivo",
+            "Rajčata mini Roma",
             "Jihočeské máslo"
           ]
         },
         {
           "type": "obed",
-          "name": "Pečené kuřecí čtvrtky s bramborami a okurkovým salátem",
+          "name": "Sendviče s pečenou vepřovou plecí a zeleninou",
+          "source_url": null,
+          "ingredients": [
+            {
+              "name": "Pšeničné běžné pečivo",
+              "amount": "4 ks (260 g)",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 11.6
+            },
+            {
+              "name": "Pečená Vepřová plec (zbytky z úterý)",
+              "amount": "200 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 9.98
+            },
+            {
+              "name": "Salátové listy",
+              "amount": "100 g",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Rajčata mini Roma",
+              "amount": "100 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 7.96
+            },
+            {
+              "name": "Hořčice",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            }
+          ],
+          "instructions": "Pečivo rozkrojte, potřete hořčicí, obložte plátky pečené vepřové plece, salátovými listy a plátky rajčat.",
+          "prep_minutes": 10,
+          "akce_items": [
+            "Pšeničné běžné pečivo",
+            "Vepřová plec s kůží, na pečení, vakuové balení",
+            "Rajčata mini Roma"
+          ]
+        },
+        {
+          "type": "vecere",
+          "name": "Kuřecí nudličky se zeleninou a rýží",
+          "source_url": null,
+          "ingredients": [
+            {
+              "name": "Kuřecí čtvrtky zadní (maso vykostěné)",
+              "amount": "500 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 29.95
+            },
+            {
+              "name": "Rajčata mini Roma",
+              "amount": "150 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 11.94
+            },
+            {
+              "name": "Paprika",
+              "amount": "1 ks",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Cibule",
+              "amount": "1 ks",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Rýže",
+              "amount": "250 g",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Sójová omáčka",
+              "amount": "2 lžíce",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Olivový olej",
+              "amount": "2 lžíce",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Sůl",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Pepř",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            }
+          ],
+          "instructions": "Rýži uvařte dle návodu. Kuřecí maso nakrájejte na nudličky, osolte a opepřete. Na pánvi rozehřejte olej, orestujte cibuli, přidejte maso a opečte. Přidejte nakrájenou papriku a rajčata. Duste asi 10 minut, dochuťte sójovou omáčkou. Podávejte s rýží.",
+          "prep_minutes": 25,
+          "akce_items": [
+            "Kuřecí čtvrtky zadní",
+            "Rajčata mini Roma"
+          ]
+        }
+      ]
+    },
+    {
+      "day": "Čtvrtek",
+      "date": "2026-06-04",
+      "is_weekend": false,
+      "meals": [
+        {
+          "type": "snidane",
+          "name": "Jogurt s nektarinkami a pletencem s pekanovými ořechy",
+          "source_url": null,
+          "ingredients": [
+            {
+              "name": "Bílý jogurt",
+              "amount": "400 g",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Nektarinky dovoz Maroko I. jakost",
+              "amount": "2 ks (cca 300 g)",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 14.97
+            },
+            {
+              "name": "Pletenec s pekanovými ořechy jemné pečivo",
+              "amount": "4 ks (340 g)",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 39.6
+            }
+          ],
+          "instructions": "Jogurt rozdělte do misek, přidejte nakrájené nektarinky. Podávejte s pletencem s pekanovými ořechy.",
+          "prep_minutes": 10,
+          "akce_items": [
+            "Nektarinky dovoz Maroko I. jakost",
+            "Pletenec s pekanovými ořechy jemné pečivo ze zmrazeného polotovaru"
+          ]
+        },
+        {
+          "type": "obed",
+          "name": "Rychlá bramborová polévka s vejcem a majoránkou",
+          "source_url": null,
+          "ingredients": [
+            {
+              "name": "Brambory žluté rané dovoz Španělsko",
+              "amount": "500 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 10.95
+            },
+            {
+              "name": "Zeleninový vývar",
+              "amount": "1.2 l",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Vejce z podestýlkového chovu velikost M",
+              "amount": "4 ks",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 15.96
+            },
+            {
+              "name": "Cibule",
+              "amount": "1 ks",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Česnek",
+              "amount": "2 stroužky",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Sušená majoránka",
+              "amount": "1 lžička",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Olej",
+              "amount": "1 lžíce",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Sůl",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Pepř",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            }
+          ],
+          "instructions": "Brambory oloupejte a nakrájejte na kostičky. Na oleji zpěňte nakrájenou cibuli a česnek, přidejte brambory a krátce orestujte. Zalijte vývarem a vařte doměkka. Vejce rozšlehejte a za stálého míchání vlijte do polévky. Dochuťte majoránkou, solí a pepřem.",
+          "prep_minutes": 25,
+          "akce_items": [
+            "Brambory žluté rané dovoz Španělsko",
+            "Vejce z podestýlkového chovu velikost M"
+          ]
+        },
+        {
+          "type": "vecere",
+          "name": "Plátky vepřové kýty na bylinkách s americkými bramborami",
+          "source_url": null,
+          "ingredients": [
+            {
+              "name": "Vepřová kýta bez kosti, v celku, vakuové balení",
+              "amount": "500 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 34.95
+            },
+            {
+              "name": "Brambory žluté rané dovoz Španělsko",
+              "amount": "700 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 15.33
+            },
+            {
+              "name": "Bylinky (rozmarýn, tymián)",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Cibule",
+              "amount": "1 ks",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Olivový olej",
+              "amount": "3 lžíce",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Sůl",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Pepř",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Mletá paprika",
+              "amount": "1 lžička",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            }
+          ],
+          "instructions": "Vepřovou kýtu nakrájejte na plátky, osolte, opepřete a posypte bylinkami. Brambory omyjte, nakrájejte na měsíčky (nebo klínky), promíchejte s olivovým olejem, solí, mletou paprikou a cibulí nakrájenou na plátky. Maso a brambory rozložte na plech a pečte v předehřáté troubě na 190°C asi 30 minut.",
+          "prep_minutes": 20,
+          "akce_items": [
+            "Vepřová kýta bez kosti, v celku, vakuové balení",
+            "Brambory žluté rané dovoz Španělsko"
+          ]
+        }
+      ]
+    },
+    {
+      "day": "Pátek",
+      "date": "2026-06-05",
+      "is_weekend": false,
+      "meals": [
+        {
+          "type": "snidane",
+          "name": "Francouzský toast s nektarinkovým pyré",
+          "source_url": null,
+          "ingredients": [
+            {
+              "name": "Pšeničné běžné pečivo",
+              "amount": "6 ks (390 g)",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 17.4
+            },
+            {
+              "name": "Vejce z podestýlkového chovu velikost M",
+              "amount": "3 ks",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 11.97
+            },
+            {
+              "name": "Mléko",
+              "amount": "100 ml",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Jihočeské máslo",
+              "amount": "30 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 4.79
+            },
+            {
+              "name": "Nektarinky dovoz Maroko I. jakost",
+              "amount": "3 ks (cca 450 g)",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 22.46
+            },
+            {
+              "name": "Skořice",
+              "amount": "špetka",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            }
+          ],
+          "instructions": "Vejce rozšlehejte s mlékem a špetkou skořice. Plátky pečiva namočte do vaječné směsi a opečte na másle dozlatova. Nektarinky rozmixujte na pyré. Hotové toasty podávejte s nektarinkovým pyré.",
+          "prep_minutes": 20,
+          "akce_items": [
+            "Pšeničné běžné pečivo",
+            "Vejce z podestýlkového chovu velikost M",
+            "Jihočeské máslo",
+            "Nektarinky dovoz Maroko I. jakost"
+          ]
+        },
+        {
+          "type": "obed",
+          "name": "Zavináče s čerstvým pečivem",
+          "source_url": null,
+          "ingredients": [
+            {
+              "name": "Zavináče",
+              "amount": "400 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 67.6
+            },
+            {
+              "name": "Pšeničné běžné pečivo",
+              "amount": "4 ks (260 g)",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 11.6
+            }
+          ],
+          "instructions": "Zavináče podávejte přímo z balení s čerstvým pšeničným pečivem.",
+          "prep_minutes": 5,
+          "akce_items": [
+            "Zavináče",
+            "Pšeničné běžné pečivo"
+          ]
+        },
+        {
+          "type": "vecere",
+          "name": "Grilovaný kuřecí mix s opečenými bramborami a čerstvým salátem",
+          "source_url": null,
+          "ingredients": [
+            {
+              "name": "Kuřecí mix Flamengo/Merenge na gril na alu tácku",
+              "amount": "1 kg",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 129.9
+            },
+            {
+              "name": "Brambory žluté rané dovoz Španělsko",
+              "amount": "800 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 17.52
+            },
+            {
+              "name": "Rajčata mini Roma",
+              "amount": "200 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 15.92
+            },
+            {
+              "name": "Okurka",
+              "amount": "1 ks",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Paprika",
+              "amount": "2 ks",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Tatarská omáčka/Majonéza/Salátová omáčka",
+              "amount": "80 ml",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 8.87
+            },
+            {
+              "name": "Olivový olej",
+              "amount": "2 lžíce",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Sůl",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Pepř",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            }
+          ],
+          "instructions": "Kuřecí mix ugrilujte nebo opečte na pánvi. Brambory nakrájejte na plátky a opečte dozlatova. Zeleninu nakrájejte na kousky, promíchejte a vytvořte salát. Podávejte grilované kuře s bramborami, salátem a tatarskou omáčkou.",
+          "prep_minutes": 30,
+          "akce_items": [
+            "Kuřecí mix Flamengo/Merenge na gril na alu tácku",
+            "Brambory žluté rané dovoz Španělsko",
+            "Rajčata mini Roma",
+            "Tatarská omáčka/Majonéza/Salátová omáčka"
+          ]
+        }
+      ]
+    },
+    {
+      "day": "Sobota",
+      "date": "2026-06-06",
+      "is_weekend": true,
+      "meals": [
+        {
+          "type": "snidane",
+          "name": "Palačinky s nektarinkami a jogurtem",
+          "source_url": null,
+          "ingredients": [
+            {
+              "name": "Hladká mouka",
+              "amount": "200 g",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Mléko",
+              "amount": "400 ml",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Vejce z podestýlkového chovu velikost M",
+              "amount": "2 ks",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 7.98
+            },
+            {
+              "name": "Nektarinky dovoz Maroko I. jakost",
+              "amount": "3 ks (cca 450 g)",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 22.46
+            },
+            {
+              "name": "Jihočeské máslo",
+              "amount": "20 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 3.19
+            },
+            {
+              "name": "Bílý jogurt/tvaroh",
+              "amount": "200 g",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Med",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            }
+          ],
+          "instructions": "Z mouky, mléka a vajec ušlehejte hladké těsto na palačinky. Na pánvi rozehřejte máslo a usmažte tenké palačinky. Nektarinky nakrájejte na plátky. Hotové palačinky podávejte s jogurtem, nektarinkami a zakápněte medem.",
+          "prep_minutes": 25,
+          "akce_items": [
+            "Vejce z podestýlkového chovu velikost M",
+            "Nektarinky dovoz Maroko I. jakost",
+            "Jihočeské máslo"
+          ]
+        },
+        {
+          "type": "obed",
+          "name": "Piknikové bagety s Camembertem, rajčaty a pečeným masem",
+          "source_url": null,
+          "ingredients": [
+            {
+              "name": "Pšeničné běžné pečivo (bagety)",
+              "amount": "4 ks (260 g)",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 11.6
+            },
+            {
+              "name": "Camembert sýr s bílou plísní",
+              "amount": "200 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 39.8
+            },
+            {
+              "name": "Rajčata mini Roma",
+              "amount": "150 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 11.94
+            },
+            {
+              "name": "Pečené maso (Vepřová kýta/plec, zbytky)",
+              "amount": "200 g",
+              "akce": true,
+              "store": "Kaufland",
+              "price_approx": 13.98
+            },
+            {
+              "name": "Salátové listy",
+              "amount": "50 g",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Hořčice",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            }
+          ],
+          "instructions": "Bagety rozkrojte, potřete hořčicí, obložte salátovými listy, plátky camembertu, rajčat a tenkými plátky pečeného masa. Zabalte a vezměte s sebou na piknik.",
+          "prep_minutes": 15,
+          "akce_items": [
+            "Pšeničné běžné pečivo",
+            "Camembert sýr s bílou plísní",
+            "Rajčata mini Roma",
+            "Vepřová kýta bez kosti, v celku, vakuové balení"
+          ]
+        },
+        {
+          "type": "vecere",
+          "name": "Rychlé pečené kuřecí čtvrtky s bylinkami a bramborovou kaší",
           "source_url": null,
           "ingredients": [
             {
@@ -87,893 +1301,54 @@
               "price_approx": 17.52
             },
             {
-              "name": "Česká salátová okurka",
-              "amount": "1 ks",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 11.9
+              "name": "Mléko",
+              "amount": "100 ml",
+              "akce": false,
+              "store": null,
+              "price_approx": null
             },
             {
-              "name": "Tatarská omáčka/Majonéza/Salátová omáčka",
-              "amount": "100 ml",
+              "name": "Jihočeské máslo",
+              "amount": "50 g",
               "akce": true,
               "store": "Kaufland",
-              "price_approx": 11.09
+              "price_approx": 7.98
+            },
+            {
+              "name": "Sušené bylinky (provensálské)",
+              "amount": "2 lžičky",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Sůl",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Pepř",
+              "amount": "dle chuti",
+              "akce": false,
+              "store": null,
+              "price_approx": null
+            },
+            {
+              "name": "Olej",
+              "amount": "2 lžíce",
+              "akce": false,
+              "store": null,
+              "price_approx": null
             }
           ],
-          "instructions": "Kuřecí čtvrtky osolte, opepřete a pečte v troubě na 180°C asi 45-60 minut do zlatova. Brambory oloupejte, nakrájejte na čtvrtky a pečte s kuřetem, nebo uvařte v osolené vodě. Okurku nastrouhejte, smíchejte s tatarskou omáčkou a trochou vody na salát.",
+          "instructions": "Kuřecí čtvrtky osolte, opepřete, potřete olejem a posypte bylinkami. Pečte v předehřáté troubě na 190°C asi 35-40 minut. Brambory oloupejte, uvařte doměkka, sceďte a rozmačkejte s teplým mlékem a máslem na kaši. Podávejte kuře s bramborovou kaší.",
           "prep_minutes": 20,
           "akce_items": [
             "Kuřecí čtvrtky zadní",
             "Brambory žluté rané dovoz Španělsko",
-            "Česká salátová okurka",
-            "Tatarská omáčka/Majonéza/Salátová omáčka"
-          ]
-        },
-        {
-          "type": "vecere",
-          "name": "Těstovinový salát s kousky vepřové kýty a čerstvou zeleninou",
-          "source_url": null,
-          "ingredients": [
-            {
-              "name": "Vepřová kýta bez kosti, v celku",
-              "amount": "300 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 20.97
-            },
-            {
-              "name": "Těstoviny (např. vřetena)",
-              "amount": "300 g",
-              "akce": false,
-              "store": null,
-              "price_approx": 15.0
-            },
-            {
-              "name": "Rajčata mini Roma",
-              "amount": "125 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 9.95
-            },
-            {
-              "name": "Česká salátová okurka",
-              "amount": "0.5 ks",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 5.95
-            },
-            {
-              "name": "Eidam 45 %",
-              "amount": "100 g",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 11.63
-            }
-          ],
-          "instructions": "Vepřovou kýtu nakrájejte na nudličky a rychle opečte na pánvi. Těstoviny uvařte dle návodu. Smíchejte uvařené těstoviny, opečenou kýtu, nakrájená rajčata, okurku a kostičky eidam. Podávejte teplé nebo studené.",
-          "prep_minutes": 25,
-          "akce_items": [
-            "Vepřová kýta bez kosti, v celku",
-            "Rajčata mini Roma",
-            "Česká salátová okurka",
-            "Eidam 45 %"
-          ]
-        }
-      ]
-    },
-    {
-      "day": "Pondělí",
-      "date": "2026-05-25",
-      "is_weekend": false,
-      "meals": [
-        {
-          "type": "snidane",
-          "name": "Chléb s máslem, šunkou a sýrem, nektarinka",
-          "source_url": null,
-          "ingredients": [
-            {
-              "name": "Pšeničné běžné pečivo",
-              "amount": "4 ks",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 11.6
-            },
-            {
-              "name": "Jihočeské máslo",
-              "amount": "20 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 3.19
-            },
-            {
-              "name": "Kuřecí prsní šunka",
-              "amount": "60 g",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 9.95
-            },
-            {
-              "name": "Eidam 45 %",
-              "amount": "80 g",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 9.3
-            },
-            {
-              "name": "Nektarinky dovoz Maroko I. jakost",
-              "amount": "200 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 9.98
-            }
-          ],
-          "instructions": "Pečivo namažte máslem, obložte šunkou a sýrem. Podávejte s nakrájenými nektarinkami.",
-          "prep_minutes": 10,
-          "akce_items": [
-            "Pšeničné běžné pečivo",
-            "Jihočeské máslo",
-            "Kuřecí prsní šunka",
-            "Eidam 45 %",
-            "Nektarinky dovoz Maroko I. jakost"
-          ]
-        },
-        {
-          "type": "obed",
-          "name": "Rychlé těstoviny s rajčatovou omáčkou a Eidamem",
-          "source_url": null,
-          "ingredients": [
-            {
-              "name": "Těstoviny (např. špagety)",
-              "amount": "300 g",
-              "akce": false,
-              "store": null,
-              "price_approx": 15.0
-            },
-            {
-              "name": "Rajčata mini Roma",
-              "amount": "250 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 19.9
-            },
-            {
-              "name": "Eidam 45 %",
-              "amount": "100 g",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 11.63
-            }
-          ],
-          "instructions": "Těstoviny uvařte dle návodu. Rajčata nakrájejte na čtvrtky a krátce poduste na pánvi s trochou oleje a bylinkami, aby pustila šťávu. Smíchejte s uvařenými těstovinami a posypte strouhaným eidamem.",
-          "prep_minutes": 20,
-          "akce_items": [
-            "Rajčata mini Roma",
-            "Eidam 45 %"
-          ]
-        },
-        {
-          "type": "vecere",
-          "name": "Plátky vepřové pečeně na přírodno s vařenými bramborami a okurkovým salátem",
-          "source_url": null,
-          "ingredients": [
-            {
-              "name": "Vepřová pečeně bez kosti",
-              "amount": "500 g",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 39.95
-            },
-            {
-              "name": "Brambory žluté rané dovoz Španělsko",
-              "amount": "700 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 15.33
-            },
-            {
-              "name": "Česká salátová okurka",
-              "amount": "1 ks",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 11.9
-            }
-          ],
-          "instructions": "Vepřovou pečeni nakrájejte na plátky, osolte a opepřete. Rychle opečte na pánvi z obou stran. Brambory uvařte ve slupce nebo oloupané. Okurku nakrájejte na kolečka a podávejte jako salát.",
-          "prep_minutes": 25,
-          "akce_items": [
-            "Vepřová pečeně bez kosti",
-            "Brambory žluté rané dovoz Španělsko",
-            "Česká salátová okurka"
-          ]
-        }
-      ]
-    },
-    {
-      "day": "Úterý",
-      "date": "2026-05-26",
-      "is_weekend": false,
-      "meals": [
-        {
-          "type": "snidane",
-          "name": "Ovesná kaše s nektarinkami a hrozny",
-          "source_url": null,
-          "ingredients": [
-            {
-              "name": "Ovesné vločky",
-              "amount": "200 g",
-              "akce": false,
-              "store": null,
-              "price_approx": 10.0
-            },
-            {
-              "name": "Mléko",
-              "amount": "500 ml",
-              "akce": false,
-              "store": null,
-              "price_approx": 12.0
-            },
-            {
-              "name": "Nektarinky dovoz Maroko I. jakost",
-              "amount": "200 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 9.98
-            },
-            {
-              "name": "Bílé hrozny stolní bezsemenné",
-              "amount": "150 g",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 11.97
-            }
-          ],
-          "instructions": "Ovesné vločky uvařte v mléce do zhoustnutí. Podávejte s nakrájenými nektarinkami a hrozny.",
-          "prep_minutes": 15,
-          "akce_items": [
-            "Nektarinky dovoz Maroko I. jakost",
-            "Bílé hrozny stolní bezsemenné"
-          ]
-        },
-        {
-          "type": "obed",
-          "name": "Polévka z červené čočky s Pšeničným běžným pečivem",
-          "source_url": null,
-          "ingredients": [
-            {
-              "name": "Červená čočka",
-              "amount": "200 g",
-              "akce": false,
-              "store": null,
-              "price_approx": 20.0
-            },
-            {
-              "name": "Zeleninový vývar",
-              "amount": "1 l",
-              "akce": false,
-              "store": null,
-              "price_approx": 10.0
-            },
-            {
-              "name": "Rajčata mini Roma",
-              "amount": "125 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 9.95
-            },
-            {
-              "name": "Pšeničné běžné pečivo",
-              "amount": "4 ks",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 11.6
-            }
-          ],
-          "instructions": "Čočku uvařte ve vývaru s nakrájenými rajčaty doměkka. Můžete rozmixovat dohladka nebo nechat vcelku. Podávejte s čerstvým pečivem.",
-          "prep_minutes": 25,
-          "akce_items": [
-            "Rajčata mini Roma",
-            "Pšeničné běžné pečivo"
-          ]
-        },
-        {
-          "type": "vecere",
-          "name": "Zapečené brambory s vepřovou plecí a sýrem Eidam",
-          "source_url": null,
-          "ingredients": [
-            {
-              "name": "Vepřová plec s kůží, na pečení",
-              "amount": "500 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 24.95
-            },
-            {
-              "name": "Brambory žluté rané dovoz Španělsko",
-              "amount": "800 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 17.52
-            },
-            {
-              "name": "Eidam 45 %",
-              "amount": "150 g",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 17.45
-            }
-          ],
-          "instructions": "Vepřovou plec nakrájejte na menší kousky a zprudka opečte. Brambory nakrájejte na plátky. Vrstvěte do zapékací misky brambory, maso, osolte, opepřete a posypte strouhaným eidamem. Pečte v troubě na 190°C asi 30-40 minut do změknutí brambor a zlatova.",
-          "prep_minutes": 30,
-          "akce_items": [
-            "Vepřová plec s kůží, na pečení",
-            "Brambory žluté rané dovoz Španělsko",
-            "Eidam 45 %"
-          ]
-        }
-      ]
-    },
-    {
-      "day": "Středa",
-      "date": "2026-05-27",
-      "is_weekend": false,
-      "meals": [
-        {
-          "type": "snidane",
-          "name": "Bílý jogurt s hrozny a sušeným ovocem",
-          "source_url": null,
-          "ingredients": [
-            {
-              "name": "Bílý jogurt",
-              "amount": "400 g",
-              "akce": false,
-              "store": null,
-              "price_approx": 25.0
-            },
-            {
-              "name": "Bílé hrozny stolní bezsemenné",
-              "amount": "200 g",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 15.96
-            },
-            {
-              "name": "Ovoce sušené mrazem",
-              "amount": "30 g",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 34.9
-            }
-          ],
-          "instructions": "Bílý jogurt rozdělte do misek, přidejte omyté hrozny a posypte mrazem sušeným ovocem.",
-          "prep_minutes": 5,
-          "akce_items": [
-            "Bílé hrozny stolní bezsemenné",
-            "Ovoce sušené mrazem"
-          ]
-        },
-        {
-          "type": "obed",
-          "name": "Sendviče s kuřecí šunkou, eidamem, rajčaty a okurkou",
-          "source_url": null,
-          "ingredients": [
-            {
-              "name": "Pšeničné běžné pečivo",
-              "amount": "8 ks",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 23.2
-            },
-            {
-              "name": "Jihočeské máslo",
-              "amount": "20 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 3.19
-            },
-            {
-              "name": "Kuřecí prsní šunka",
-              "amount": "120 g",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 19.9
-            },
-            {
-              "name": "Eidam 45 %",
-              "amount": "100 g",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 11.63
-            },
-            {
-              "name": "Rajčata mini Roma",
-              "amount": "125 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 9.95
-            },
-            {
-              "name": "Česká salátová okurka",
-              "amount": "0.5 ks",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 5.95
-            }
-          ],
-          "instructions": "Pečivo namažte máslem, obložte šunkou, sýrem, plátky rajčat a okurky. Můžete přiklopit dalším pečivem nebo podávat otevřené.",
-          "prep_minutes": 10,
-          "akce_items": [
-            "Pšeničné běžné pečivo",
-            "Jihočeské máslo",
-            "Kuřecí prsní šunka",
-            "Eidam 45 %",
-            "Rajčata mini Roma",
-            "Česká salátová okurka"
-          ]
-        },
-        {
-          "type": "vecere",
-          "name": "Vepřové plátky na přírodno s rýží a rajčatovým salátem",
-          "source_url": null,
-          "ingredients": [
-            {
-              "name": "Vepřová kýta bez kosti, v celku",
-              "amount": "400 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 27.96
-            },
-            {
-              "name": "Rýže",
-              "amount": "300 g",
-              "akce": false,
-              "store": null,
-              "price_approx": 15.0
-            },
-            {
-              "name": "Rajčata mini Roma",
-              "amount": "250 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 19.9
-            },
-            {
-              "name": "Česká salátová okurka",
-              "amount": "0.5 ks",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 5.95
-            }
-          ],
-          "instructions": "Vepřovou kýtu nakrájejte na tenké plátky, osolte a opepřete. Zprudka opečte na pánvi z obou stran. Rýži uvařte dle návodu. Rajčata nakrájejte na čtvrtky, okurku na kostičky a smíchejte na salát.",
-          "prep_minutes": 25,
-          "akce_items": [
-            "Vepřová kýta bez kosti, v celku",
-            "Rajčata mini Roma",
-            "Česká salátová okurka"
-          ]
-        }
-      ]
-    },
-    {
-      "day": "Čtvrtek",
-      "date": "2026-05-28",
-      "is_weekend": false,
-      "meals": [
-        {
-          "type": "snidane",
-          "name": "Palačinky s nektarinkami a jogurtem",
-          "source_url": null,
-          "ingredients": [
-            {
-              "name": "Vejce z podestýlkového chovu velikost M",
-              "amount": "2 ks",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 7.98
-            },
-            {
-              "name": "Hladká mouka",
-              "amount": "200 g",
-              "akce": false,
-              "store": null,
-              "price_approx": 5.0
-            },
-            {
-              "name": "Mléko",
-              "amount": "400 ml",
-              "akce": false,
-              "store": null,
-              "price_approx": 10.0
-            },
-            {
-              "name": "Nektarinky dovoz Maroko I. jakost",
-              "amount": "200 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 9.98
-            },
-            {
-              "name": "Bílý jogurt",
-              "amount": "200 g",
-              "akce": false,
-              "store": null,
-              "price_approx": 12.5
-            }
-          ],
-          "instructions": "Z vajec, mouky a mléka připravte těsto na palačinky. Na pánvi upečte tenké palačinky. Podávejte s nakrájenými nektarinkami a lžící jogurtu.",
-          "prep_minutes": 20,
-          "akce_items": [
-            "Vejce z podestýlkového chovu velikost M",
-            "Nektarinky dovoz Maroko I. jakost"
-          ]
-        },
-        {
-          "type": "obed",
-          "name": "Těstoviny aglio e olio s mini rajčaty a strouhaným Eidamem",
-          "source_url": null,
-          "ingredients": [
-            {
-              "name": "Těstoviny (např. špagety)",
-              "amount": "300 g",
-              "akce": false,
-              "store": null,
-              "price_approx": 15.0
-            },
-            {
-              "name": "Rajčata mini Roma",
-              "amount": "250 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 19.9
-            },
-            {
-              "name": "Eidam 45 %",
-              "amount": "100 g",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 11.63
-            }
-          ],
-          "instructions": "Těstoviny uvařte dle návodu. Na pánvi na olivovém oleji krátce orestujte česnek a přidáme nakrájená mini rajčata. Smíchejte s uvařenými těstovinami a posypte strouhaným eidamem.",
-          "prep_minutes": 20,
-          "akce_items": [
-            "Rajčata mini Roma",
-            "Eidam 45 %"
-          ]
-        },
-        {
-          "type": "vecere",
-          "name": "Opečené brambory s volským okem a okurkovým salátem",
-          "source_url": null,
-          "ingredients": [
-            {
-              "name": "Brambory žluté rané dovoz Španělsko",
-              "amount": "800 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 17.52
-            },
-            {
-              "name": "Vejce z podestýlkového chovu velikost M",
-              "amount": "2 ks",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 7.98
-            },
-            {
-              "name": "Česká salátová okurka",
-              "amount": "1 ks",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 11.9
-            },
-            {
-              "name": "Tatarská omáčka/Majonéza/Salátová omáčka",
-              "amount": "50 ml",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 5.55
-            }
-          ],
-          "instructions": "Brambory uvařte ve slupce, oloupejte a nakrájejte na plátky. Opečte na pánvi dozlatova. Na jiné pánvi usmažte volská oka z vajec. Okurku nakrájejte na kolečka a podávejte s tatarskou omáčkou.",
-          "prep_minutes": 25,
-          "akce_items": [
-            "Brambory žluté rané dovoz Španělsko",
-            "Vejce z podestýlkového chovu velikost M",
-            "Česká salátová okurka",
-            "Tatarská omáčka/Majonéza/Salátová omáčka"
-          ]
-        }
-      ]
-    },
-    {
-      "day": "Pátek",
-      "date": "2026-05-29",
-      "is_weekend": false,
-      "meals": [
-        {
-          "type": "snidane",
-          "name": "Pečivo s Camembertem, okurkou a hrozny",
-          "source_url": null,
-          "ingredients": [
-            {
-              "name": "Pšeničné běžné pečivo",
-              "amount": "4 ks",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 11.6
-            },
-            {
-              "name": "Camembert sýr s bílou plísní",
-              "amount": "100 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 19.9
-            },
-            {
-              "name": "Česká salátová okurka",
-              "amount": "0.5 ks",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 5.95
-            },
-            {
-              "name": "Bílé hrozny stolní bezsemenné",
-              "amount": "150 g",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 11.97
-            }
-          ],
-          "instructions": "Pečivo podélně rozřízněte, obložte plátky camembertu, okurky a podávejte s hrozny.",
-          "prep_minutes": 10,
-          "akce_items": [
-            "Pšeničné běžné pečivo",
-            "Camembert sýr s bílou plísní",
-            "Česká salátová okurka",
-            "Bílé hrozny stolní bezsemenné"
-          ]
-        },
-        {
-          "type": "obed",
-          "name": "Rychlá zeleninová polévka s Pšeničným běžným pečivem",
-          "source_url": null,
-          "ingredients": [
-            {
-              "name": "Zeleninový vývar",
-              "amount": "1 l",
-              "akce": false,
-              "store": null,
-              "price_approx": 10.0
-            },
-            {
-              "name": "Rajčata mini Roma",
-              "amount": "125 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 9.95
-            },
-            {
-              "name": "Česká salátová okurka",
-              "amount": "0.5 ks",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 5.95
-            },
-            {
-              "name": "Pšeničné běžné pečivo",
-              "amount": "4 ks",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 11.6
-            }
-          ],
-          "instructions": "Do vroucího vývaru přidejte nakrájená rajčata a okurku. Krátce povařte, dochuťte bylinkami. Podávejte s čerstvým pečivem.",
-          "prep_minutes": 20,
-          "akce_items": [
-            "Rajčata mini Roma",
-            "Česká salátová okurka",
-            "Pšeničné běžné pečivo"
-          ]
-        },
-        {
-          "type": "vecere",
-          "name": "Vepřové karbanátky (z kýty) s bramborovou kaší a okurkou",
-          "source_url": null,
-          "ingredients": [
-            {
-              "name": "Vepřová kýta bez kosti, v celku",
-              "amount": "300 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 20.97
-            },
-            {
-              "name": "Vejce z podestýlkového chovu velikost M",
-              "amount": "1 ks",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 3.99
-            },
-            {
-              "name": "Strouhanka",
-              "amount": "50 g",
-              "akce": false,
-              "store": null,
-              "price_approx": 5.0
-            },
-            {
-              "name": "Brambory žluté rané dovoz Španělsko",
-              "amount": "800 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 17.52
-            },
-            {
-              "name": "Mléko",
-              "amount": "100 ml",
-              "akce": false,
-              "store": null,
-              "price_approx": 2.5
-            },
-            {
-              "name": "Jihočeské máslo",
-              "amount": "20 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 3.19
-            },
-            {
-              "name": "Česká salátová okurka",
-              "amount": "1 ks",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 11.9
-            }
-          ],
-          "instructions": "Vepřovou kýtu umelte nebo velmi jemně nasekejte. Smíchejte s vejcem, strouhankou, solí a pepřem. Vytvarujte karbanátky a opečte na pánvi. Brambory uvařte, rozšťouchejte s mlékem a máslem na kaši. Okurku nakrájejte.",
-          "prep_minutes": 30,
-          "akce_items": [
-            "Vepřová kýta bez kosti, v celku",
-            "Vejce z podestýlkového chovu velikost M",
-            "Brambory žluté rané dovoz Španělsko",
-            "Jihočeské máslo",
-            "Česká salátová okurka"
-          ]
-        }
-      ]
-    },
-    {
-      "day": "Sobota",
-      "date": "2026-05-30",
-      "is_weekend": true,
-      "meals": [
-        {
-          "type": "snidane",
-          "name": "Pletenec s pekanovými ořechy, jogurt, nektarinka",
-          "source_url": null,
-          "ingredients": [
-            {
-              "name": "Pletenec s pekanovými ořechy jemné pečivo ze zmrazeného polotovaru",
-              "amount": "4 ks",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 39.6
-            },
-            {
-              "name": "Bílý jogurt",
-              "amount": "400 g",
-              "akce": false,
-              "store": null,
-              "price_approx": 25.0
-            },
-            {
-              "name": "Nektarinky dovoz Maroko I. jakost",
-              "amount": "200 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 9.98
-            }
-          ],
-          "instructions": "Pletence upečte dle návodu. Podávejte s bílým jogurtem a nakrájenými nektarinkami.",
-          "prep_minutes": 15,
-          "akce_items": [
-            "Pletenec s pekanovými ořechy jemné pečivo ze zmrazeného polotovaru",
-            "Nektarinky dovoz Maroko I. jakost"
-          ]
-        },
-        {
-          "type": "obed",
-          "name": "Studené sendviče na cesty s Cyrilovými brambůrky",
-          "source_url": null,
-          "ingredients": [
-            {
-              "name": "Pšeničné běžné pečivo",
-              "amount": "8 ks",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 23.2
-            },
-            {
-              "name": "Kuřecí prsní šunka",
-              "amount": "120 g",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 19.9
-            },
-            {
-              "name": "Eidam 45 %",
-              "amount": "100 g",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 11.63
-            },
-            {
-              "name": "Rajčata mini Roma",
-              "amount": "125 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 9.95
-            },
-            {
-              "name": "Česká salátová okurka",
-              "amount": "0.5 ks",
-              "akce": true,
-              "store": "Lidl",
-              "price_approx": 5.95
-            },
-            {
-              "name": "Cyrilovy brambůrky různé druhy",
-              "amount": "200 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 35.8
-            }
-          ],
-          "instructions": "Pečivo namažte tenkou vrstvou másla, obložte šunkou, sýrem, rajčaty a okurkou. Zabalte do svačinových papírů. Podávejte s brambůrky.",
-          "prep_minutes": 15,
-          "akce_items": [
-            "Pšeničné běžné pečivo",
-            "Kuřecí prsní šunka",
-            "Eidam 45 %",
-            "Rajčata mini Roma",
-            "Česká salátová okurka",
-            "Cyrilovy brambůrky různé druhy"
-          ]
-        },
-        {
-          "type": "vecere",
-          "name": "Pečená vepřová plec s bramborami",
-          "source_url": null,
-          "ingredients": [
-            {
-              "name": "Vepřová plec s kůží, na pečení",
-              "amount": "500 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 24.95
-            },
-            {
-              "name": "Brambory žluté rané dovoz Španělsko",
-              "amount": "800 g",
-              "akce": true,
-              "store": "Kaufland",
-              "price_approx": 17.52
-            },
-            {
-              "name": "Cibule",
-              "amount": "1 ks",
-              "akce": false,
-              "store": null,
-              "price_approx": 5.0
-            }
-          ],
-          "instructions": "Vepřovou plec osolte, okmínujte a pečte v troubě na 160°C pomalu asi 2-3 hodiny do měkka. Brambory uvařte nebo pečte společně s masem. Aktivní příprava trvá zhruba 20 minut.",
-          "prep_minutes": 20,
-          "akce_items": [
-            "Vepřová plec s kůží, na pečení",
-            "Brambory žluté rané dovoz Španělsko"
+            "Jihočeské máslo"
           ]
         }
       ]
