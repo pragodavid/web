@@ -1,9 +1,9 @@
 {
   "kaufland": {
-    "valid_from": "2026-05-27",
-    "valid_to": "2026-06-02",
-    "products_count": 16,
-    "fetched_at": "2026-05-24T19:25:26.113572"
+    "valid_from": "2026-06-24",
+    "valid_to": "2026-06-30",
+    "products_count": 15,
+    "fetched_at": "2026-06-26T16:00:03.215126"
   },
   "lidl": {
     "valid_from": "2026-06-08",
