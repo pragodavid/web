@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warehouse Finder | AV Media Events</title>
+<link rel="icon" type="image/png" href="https://www.avmedia.cz/navody/AVME_logo.png">
+<link rel="apple-touch-icon" href="https://www.avmedia.cz/navody/AVME_logo.png">
+<link rel="stylesheet" href="assets/style.css?v=5">
+</head>
+<body>
+
+<header class="site-header">
+  <img src="assets/logo.png?v=2" alt="AV Media Events">
+  <div class="hdr-title">
+    Warehouse <span>Finder</span>
+    <span class="hdr-sub">Skladový katalog</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="card">
+    <div class="card-header">
+      <h1>Vyhledávač skladu</h1>
+      <div class="count" id="resultCount">– položek</div>
+    </div>
+
+    <div class="fields">
+      <div class="ig">
+        <label for="searchInput">Hledat (kód nebo popis)</label>
+        <input type="text" id="searchInput" placeholder="Např. Novastar VX, Powercon, wireless microphone…" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="results-meta" id="resultsMeta">Načítání katalogu…</div>
+
+    <div class="table-scroll">
+      <table class="bt">
+        <thead>
+          <tr>
+            <th>Kód</th>
+            <th>Popis</th>
+            <th class="col-zasoby">Zásoby</th>
+          </tr>
+        </thead>
+        <tbody id="resultsBody"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBox"></div>
+</div>
+
+
+<footer class="site-footer">Warehouse Finder &middot; AV Media Events &middot; interní nástroj</footer>
+
+<script src="assets/app.js?v=5"></script>
+</body>
+</html>
