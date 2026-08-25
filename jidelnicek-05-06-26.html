@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🥗 Chytrý Jídelníček 5. 6. – 11. 6. 2026</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <style>
+    :root {
+      --c-header:    #2e7d32;
+      --c-breakfast: #f9a825;
+      --c-lunch:     #388e3c;
+      --c-dinner:    #1565c0;
+      --c-action:    #ff6f00;
+      --c-email:     #4a148c;
+      --c-bg:        #e8f5e9;
+      --c-checked:   #d32f2f;
+    }
+    body { background: var(--c-bg); font-family: 'Segoe UI', system-ui, sans-serif; }
+
+    .sticky-bar { position: sticky; top: 0; z-index: 50; background: var(--c-header); box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+    .filter-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 5px 0; }
+    .filter-label { font-size: 11px; font-weight: 700; color: rgba(255,255,255,.65); white-space: nowrap; }
+
+    .btn-day { padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;
+               color: rgba(255,255,255,.5); background: rgba(255,255,255,.1);
+               cursor: pointer; border: 1px solid rgba(255,255,255,.15); transition: all .15s; user-select: none; }
+    .btn-day.active { color: #fff; background: rgba(255,255,255,.28); border-color: rgba(255,255,255,.4); }
+    .btn-quick { padding: 2px 8px; border-radius: 4px; font-size: 11px; color: rgba(255,255,255,.6);
+                 background: transparent; border: 1px solid rgba(255,255,255,.2); cursor: pointer; }
+    .btn-quick:hover { background: rgba(255,255,255,.15); color: #fff; }
+
+    .day-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.1); margin-bottom: 16px; }
+    .day-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #f8faf8; border-bottom: 1px solid #e2e8f0; }
+    .day-title { font-size: 15px; font-weight: 700; color: #1a202c; }
+    .day-meta  { font-size: 12px; color: #718096; margin-top: 1px; }
+    .meal-btns { display: flex; gap: 4px; }
+    .meal-btn { padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 700;
+                cursor: pointer; border: none; transition: all .15s; opacity: .35; }
+    .meal-btn.active { opacity: 1; }
+    .meal-btn[data-meal="snidane"] { background: var(--c-breakfast); color: #fff; }
+    .meal-btn[data-meal="obed"]    { background: var(--c-lunch);     color: #fff; }
+    .meal-btn[data-meal="vecere"]  { background: var(--c-dinner);    color: #fff; }
+
+    .meal-row { border-top: 1px solid #edf2f7; }
+    .meal-type-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; padding: 6px 14px 0; }
+    .t-sn { color: var(--c-breakfast); }
+    .t-ob { color: var(--c-lunch); }
+    .t-ve { color: var(--c-dinner); }
+    .meal-card { padding: 8px 14px 12px; cursor: pointer; transition: background .1s; }
+    .meal-card:hover { background: #f7fafc; }
+    .meal-name { font-size: 14px; font-weight: 600; color: #1a202c; }
+    .meal-info { font-size: 11px; color: #718096; margin-top: 2px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .akce-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+    .akce-tag { font-size: 10px; font-weight: 700; background: #fff3e0; color: var(--c-action); border: 1px solid #ffe0b2; padding: 1px 6px; border-radius: 10px; }
+    .weekend-badge { font-size: 10px; font-weight: 700; background: #e3f2fd; color: var(--c-dinner); padding: 2px 7px; border-radius: 8px; }
+
+    .deal-badge { display: inline-flex; align-items: center; gap: 4px; background: rgba(255,111,0,.85); color: #fff; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+    .w-chip { font-size: 11px; background: rgba(255,255,255,.18); border-radius: 20px; padding: 2px 8px; }
+    .header-select { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.3); border-radius: 6px; padding: 4px 8px; font-size: 13px; cursor: pointer; outline: none; }
+    .header-select option { background: #1b5e20; color: #fff; }
+
+    tr.checked-row td { color: var(--c-checked); text-decoration: line-through; opacity: .5; }
+    tr.checked-row td label, tr.checked-row td span { color: var(--c-checked); }
+    .row-akce { background: #fff8e1 !important; }
+    .shop-section-header td { background: #f3f4f6; font-weight: 700; font-size: 11px; color: #555; padding: 6px 8px !important; }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: none; z-index: 1000; overflow-y: auto; }
+    .modal-overlay.active { display: flex; justify-content: center; align-items: flex-start; padding: 20px; }
+    .modal-box { background: white; border-radius: 12px; max-width: 560px; width: 100%; padding: 24px; position: relative; margin: auto; }
+
+    #toast { position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+             background: var(--c-header); color: white; padding: 12px 18px;
+             border-radius: 8px; font-size: 13px; display: none; box-shadow: 0 4px 12px rgba(0,0,0,.3); }
+
+    .email-section { background: var(--c-email); border-radius: 10px; padding: 16px; color: white; }
+    .email-section h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+    .email-section p  { font-size: 12px; opacity: .8; margin-bottom: 12px; }
+    .email-btn { background: rgba(255,255,255,.2); color: #fff; border: 1px solid rgba(255,255,255,.4); border-radius: 8px; padding: 8px 18px; font-size: 13px; font-weight: 700; cursor: pointer; transition: background .15s; }
+    .email-btn:hover { background: rgba(255,255,255,.35); }
+
+    @media (max-width: 640px) { .days-grid { grid-template-columns: 1fr !important; } }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ HEADER ══════════ -->
+<header style="background: var(--c-header);" class="text-white px-4 py-3 shadow-lg">
+  <div class="max-w-5xl mx-auto">
+    <div class="flex flex-wrap justify-between items-start gap-3 mb-2">
+      <div>
+        <h1 class="text-xl font-bold">🥗 Chytrý Jídelníček</h1>
+        <p class="text-xs opacity-60 mt-0.5">5. 6. – 11. 6. 2026 · Generováno 31. 5. 2026</p>
+      </div>
+      <div class="flex flex-wrap gap-3 items-center">
+        <span class="deal-badge">🏷️ Kaufland: 3. 6. – 9. 6. 2026</span>
+        <label class="flex items-center gap-2 text-sm font-semibold">
+          🛒 Den nákupu:
+          <select id="shopping-day-select" class="header-select" onchange="setShoppingDay(this.value)">
+            <option value="">— nevybráno —</option>
+            <option value="pa" selected>Pátek ✓</option>
+            <option value="so">Sobota</option>
+            <option value="ne">Neděle</option>
+            <option value="po">Pondělí</option>
+            <option value="ut">Úterý</option>
+            <option value="st">Středa</option>
+            <option value="ct">Čtvrtek</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div id="weather-summary" class="flex gap-1.5 flex-wrap"></div>
+  </div>
+</header>
+
+<!-- ══════════ STICKY BAR ══════════ -->
+<div class="sticky-bar">
+  <div class="max-w-5xl mx-auto px-4 py-1.5">
+    <div class="filter-row">
+      <span class="filter-label">📅 Dny:</span>
+      <div class="flex gap-1 flex-wrap" id="day-filters"></div>
+      <div class="flex gap-1 ml-1">
+        <button class="btn-quick" onclick="toggleAllDays(true)">Vše</button>
+        <button class="btn-quick" onclick="toggleAllDays(false)">Žádný</button>
+      </div>
+      <label class="flex items-center gap-1 text-xs text-white/60 cursor-pointer ml-auto">
+        <input type="checkbox" id="show-akce-only" onchange="setAkceFilter(this.checked)" class="w-3 h-3">
+        Jen AKCE
+      </label>
+    </div>
+  </div>
+</div>
+
+<!-- Kaufland deals strip -->
+<div class="max-w-5xl mx-auto px-4 mt-3">
+  <div class="bg-orange-50 border border-orange-200 rounded-xl p-2.5 flex gap-2 flex-wrap items-center">
+    <span class="font-bold text-orange-700 text-xs shrink-0">🏷️ KAUFLAND AKCE (3. 6. – 9. 6. 2026) – Léto v plném proudu:</span>
+    <div id="deals-strip" class="flex gap-1.5 flex-wrap text-xs"></div>
+  </div>
+</div>
+
+<!-- ══════════ DAY CARDS ══════════ -->
+<main class="max-w-5xl mx-auto px-4 pb-4 mt-4" id="days-container"></main>
+
+<!-- ══════════ SHOPPING LIST ══════════ -->
+<section class="max-w-5xl mx-auto px-4 pb-4">
+  <div class="bg-white rounded-xl shadow p-4">
+    <div class="flex justify-between items-center mb-1 flex-wrap gap-2">
+      <h2 class="text-xl font-bold">🛒 Nákupní seznam</h2>
+      <div id="shopping-info" class="text-xs text-gray-500"></div>
+    </div>
+    <p class="text-xs text-gray-500 mb-3">Zde můžeš položky vyřadit z nákupního seznamu, protože je máš v domácích zásobách.</p>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm border-collapse" id="shopping-table">
+        <thead>
+          <tr class="bg-gray-50 text-gray-600 text-xs">
+            <th class="p-2 w-7"></th>
+            <th class="p-2 text-left">Položka</th>
+            <th class="p-2 text-center w-28">Množství</th>
+            <th class="p-2 text-right w-24">Cena</th>
+            <th class="p-2 text-left text-gray-400 hidden sm:table-cell">Poznámka</th>
+          </tr>
+        </thead>
+        <tbody id="shopping-body"></tbody>
+      </table>
+    </div>
+    <div class="mt-4 flex justify-between items-center flex-wrap gap-3 border-t pt-3">
+      <div class="text-xs text-gray-500">Skryté a odškrtnuté položky se nezapočítávají</div>
+      <div class="text-xl font-bold">Celkem: <span id="total-price" class="text-green-700">0,00</span> Kč</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ EXPORT + EMAIL ══════════ -->
+<div class="max-w-5xl mx-auto px-4 pb-4">
+  <div class="bg-white rounded-xl shadow p-4 flex gap-3 flex-wrap mb-4">
+    <button onclick="generatePDF()" class="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold text-sm transition">
+      <i class="fas fa-file-pdf"></i> Stáhnout PDF
+    </button>
+    <button onclick="copyShoppingText()" class="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 font-semibold text-sm transition">
+      <i class="fas fa-copy"></i> Kopírovat seznam
+    </button>
+  </div>
+  <div class="email-section">
+    <h3>✉️ Odeslat jídelníček e-mailem</h3>
+    <p>Pošle nákupní seznam a přehled jídel přímo do vaší schránky.</p>
+    <button class="email-btn" onclick="sendEmailPlan()"><i class="fas fa-envelope mr-2"></i>Odeslat e-mailem</button>
+  </div>
+</div>
+
+<!-- ══════════ MODAL ══════════ -->
+<div class="modal-overlay" id="recipe-modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <button onclick="closeModal()" class="absolute top-3 right-4 text-2xl text-gray-400 hover:text-gray-700 font-bold">×</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<!-- ══════════ DATA + SCRIPTS ══════════ -->
+<script>
+emailjs.init("2O9xlPmD5Yc5OXnAI");
+
+/* ─── RECIPES ─── */
+const recipes = {
+  /* ── SNÍDANĚ ── */
+  sn_pa:{meal:"snidane",name:"Řecký jogurt s granolou, medem a čerstvým ovocem",time:"10 min",kcal:"~300 kcal",
+    ingredients:[{n:"🏷 Řecký jogurt",q:"500 g"},{n:"Granola",q:"6 lžic"},{n:"Med",q:"4 lžičky"},{n:"Jahody nebo borůvky",q:"200 g"},{n:"Máta čerstvá",q:"na ozdobu"}],
+    instructions:"Jogurt rozdělte do misek. Navrstvujte granolu a čerstvé ovoce, přelijte medem a ozdobte lístky máty.",
+    tip:"Pro extra protein přidejte lžičku mandlového másla – krásně se pojí s medem."},
+  sn_so:{meal:"snidane",name:"Francouzské toasty s vejcem, medem a borůvkami",time:"20 min",kcal:"~390 kcal",
+    ingredients:[{n:"Toustový chléb bílý",q:"8 plátků"},{n:"🏷 Vejce L",q:"4 ks"},{n:"Mléko",q:"100 ml"},{n:"Med",q:"4 lžičky"},{n:"Máslo",q:"40 g"},{n:"Borůvky nebo jahody",q:"200 g"},{n:"Moučkový cukr",q:"posypání"}],
+    instructions:"Vejce rozmíchejte s mlékem. Plátky chleba máčejte 30 sekund v směsi. Na másle smažte 2–3 minuty z každé strany dozlatova. Podávejte s ovocem, medem a moučkovým cukrem.",
+    tip:"Chléb jeden den starý vstřebá směs lépe a toast bude křupavější."},
+  sn_ne:{meal:"snidane",name:"Vejce benedikt s lososem a špenátovým salátem",time:"30 min",kcal:"~440 kcal",
+    ingredients:[{n:"🏷 Losos porcovaný",q:"200 g"},{n:"🏷 Vejce L",q:"4 ks"},{n:"Anglické mafiny",q:"4 ks"},{n:"Baby špenát",q:"100 g"},{n:"Máslo",q:"40 g"},{n:"Citron, ocet bílý",q:"dle chuti"},{n:"Sůl, pepř",q:"dle chuti"}],
+    instructions:"Mafiny překrojte a opečte. Losos nakrájejte na plátky a mírně opečte na másle. Na osolené vodě s octem houpejte vejce 3–4 minuty. Na mafin dejte špenát, losos, pošírované vejce a pár kapek citronu.",
+    tip:"Pošírovaná vejce připravte jeden po druhém – ve vodě budou hezky kulatá."},
+  sn_po:{meal:"snidane",name:"Toast s mozzarellou, rajčaty a bazalkou",time:"8 min",kcal:"~290 kcal",
+    ingredients:[{n:"Celozrnný chléb",q:"4 plátky"},{n:"🏷 Mozzarella čerstvá",q:"250 g"},{n:"🏷 Rajčata",q:"2 ks"},{n:"Bazalka čerstvá",q:"hrst"},{n:"Olivový olej",q:"2 lžíce"},{n:"Sůl, pepř",q:"dle chuti"}],
+    instructions:"Chléb opečte. Mozzarellu a rajčata nakrájejte na plátky. Na toast skládejte střídavě rajče a mozzarellu, přelijte olivovým olejem, přidejte bazalku, sůl a pepř.",
+    tip:"Mozzarellu vyndejte z lednice 15 minut předem – při pokojové teplotě je chutnější."},
+  sn_ut:{meal:"snidane",name:"Ovesná kaše s banánem, skořicí a ořechy",time:"10 min",kcal:"~330 kcal",
+    ingredients:[{n:"Ovesné vločky",q:"200 g"},{n:"Mléko",q:"400 ml"},{n:"Banány",q:"2 ks"},{n:"Med",q:"2 lžičky"},{n:"Skořice",q:"1/2 lžičky"},{n:"Vlašské ořechy",q:"30 g"}],
+    instructions:"Vločky přidejte do studeného mléka a zahřívejte za míchání 5 minut. Banány nakrájejte a vmíchejte. Dochuťte medem a skořicí, posypte nasekanými ořechy.",
+    tip:"Kaši připravte večer – ráno stačí přidat mléko a ohřát 2 minuty v mikrovlnce."},
+  sn_st:{meal:"snidane",name:"Míchaná vajíčka s paprikou a chlebem",time:"10 min",kcal:"~350 kcal",
+    ingredients:[{n:"🏷 Vejce L",q:"8 ks"},{n:"🏷 Paprika barevná",q:"1 ks"},{n:"Máslo",q:"30 g"},{n:"Celozrnný chléb",q:"4 plátky"},{n:"Pažitka, sůl, pepř",q:"dle chuti"}],
+    instructions:"Papriku nakrájejte na drobné kostičky a osmažte na másle 3 minuty. Přilijte rozbitá vejce a za pomalého míchání připravte krémová míchaná vejce. Podávejte na opečeném chlebu, posypte pažitkou.",
+    tip:"Vajíčka sundejte z ohně dříve, než jsou zcela hotová – zbytkové teplo je dodělá."},
+  sn_ct:{meal:"snidane",name:"Jogurtový pohár s granolou a medem",time:"5 min",kcal:"~270 kcal",
+    ingredients:[{n:"🏷 Řecký jogurt",q:"400 g"},{n:"Granola",q:"4 lžíce"},{n:"Med",q:"2 lžičky"},{n:"Jahody nebo borůvky",q:"80 g"}],
+    instructions:"Jogurt přendejte do misek. Navrch přidejte granolu, čerstvé ovoce a přelijte medem. Podávejte ihned, aby granola zůstala křupavá.",
+    tip:"Noční varianta: vrstvy připravte do skleničky večer, ráno přidejte granolu."},
+
+  /* ── PLNOHODNOTNÉ OBĚDY (Pá, So, Ne) ── */
+  ob_pa:{meal:"obed",name:"Pečená kuřecí prsa s grilovanou cuketou a bylinkovými bramborami",time:"55 min",kcal:"~540 kcal",
+    ingredients:[{n:"🏷 Kuřecí prsa",q:"1 kg"},{n:"🏷 Cuketa",q:"2 ks"},{n:"Brambory",q:"1 kg"},{n:"Česnek",q:"4 stroužky"},{n:"Rozmarýn čerstvý",q:"svazek"},{n:"Olivový olej",q:"4 lžíce"},{n:"Sůl, pepř, paprika",q:"dle chuti"}],
+    instructions:"Prsa namarinujte v oleji, česneku, rozmarýnu, paprice na 20 minut. Brambory uvařte do polo-měkka a opečte v troubě 200°C/20 min. Prsa pečte 200°C/25 min. Cukety nakrájejte, grilujte na pánvi 5 min z každé strany.",
+    tip:"Kuřecí prsa nenaříznete na první pohled hotová – vložte teploměr, střed musí mít 75°C."},
+  ob_so:{meal:"obed",name:"Losos na bylinkách s bramborovým pyré a špenátem",time:"45 min",kcal:"~560 kcal",
+    ingredients:[{n:"🏷 Losos porcovaný",q:"800 g"},{n:"Brambory",q:"1 kg"},{n:"Baby špenát",q:"200 g"},{n:"Máslo",q:"60 g"},{n:"Mléko",q:"150 ml"},{n:"Citron",q:"1 ks"},{n:"Tymián, petržel",q:"čerstvé svazky"},{n:"Sůl, pepř",q:"dle chuti"}],
+    instructions:"Brambory uvařte do měkka a rozmixujte na pyré s máslem a teplým mlékem. Losos osolte, opepřete a pečte na másle kůží dolů 4–5 min, pak obraťte a opečte 3 min. Špenát krátce poduste na másle. Podávejte s citrónovou šťávou a bylinkami.",
+    tip:"Losos je hotový, když vnitřní barva přejde z průhledné na neprůhlednou růžovou."},
+  ob_ne:{meal:"obed",name:"Nedělní hovězí vývar s domácími nudlemi",time:"100 min",kcal:"~380 kcal",
+    ingredients:[{n:"Hovězí žebro nebo kližka",q:"600 g"},{n:"Mrkev",q:"3 ks"},{n:"Celer, petržel kořenová",q:"1/4 ks / 1 ks"},{n:"Cibule",q:"2 ks"},{n:"🏷 Vejce L",q:"2 ks"},{n:"Hladká mouka",q:"200 g"},{n:"Bobkový list, pepř, sůl",q:"dle chuti"},{n:"Petržel čerstvá",q:"na podávání"}],
+    instructions:"Maso zalijte studenou vodou, přiveďte k varu a odstraňte pěnu. Přidejte zeleninu a koření, vařte 80 minut. Přeceďte. Z vejce a mouky uhnětě těsto, rozválejte a nakrájejte na nudlé, vařte 5 minut ve vývaru. Podávejte s petrželí.",
+    tip:"Vývar tiše probublávající (ne prudce vařící) bude čirý a lahodný."},
+
+  /* ── RYCHLÉ OBĚDY (Po, Út, St, Čt) ── */
+  ob_po:{meal:"obed",name:"Kuřecí wrap s mozzarellou, rajčaty a rukolou",time:"15 min",kcal:"~430 kcal",
+    ingredients:[{n:"🏷 Kuřecí prsa",q:"400 g"},{n:"Celozrnné tortilly",q:"4 ks"},{n:"🏷 Mozzarella čerstvá",q:"250 g"},{n:"🏷 Rajčata",q:"2 ks"},{n:"Rukola",q:"hrst"},{n:"Olivový olej, sůl, pepř",q:"dle chuti"}],
+    instructions:"Kuřecí prsa nakrájejte na proužky, opečte na oleji 7–8 minut, osolte a opepřete. Tortillu naplňte rukolou, nakrájenými rajčaty, plátky mozzarelly a kuřecím masem. Zabalte a ihned servírujte.",
+    tip:"Tortillu 20 sekund ohřejte na suché pánvi – bude vláčnější a lépe drží tvar."},
+  ob_ut:{meal:"obed",name:"Těstovinový salát s cuketou, vejci a parmezánem",time:"20 min",kcal:"~420 kcal",
+    ingredients:[{n:"Těstoviny fusilli",q:"300 g"},{n:"🏷 Cuketa",q:"1 ks"},{n:"🏷 Vejce L",q:"4 ks"},{n:"Parmezán strouhaný",q:"50 g"},{n:"Olivový olej",q:"3 lžíce"},{n:"Česnek",q:"2 stroužky"},{n:"Sůl, pepř, bazalka",q:"dle chuti"}],
+    instructions:"Těstoviny uvařte al dente. Vejce uvařte natvrdo (10 minut). Cuketu nakrájejte na plátky a opečte na oleji s česnekem 5 minut. Vše smíchejte, přidejte čtvrtky vajec, posypte parmezánem a bazalkou.",
+    tip:"Salát je výborný studený – připravte ho předem a dejte do krabičky na práci."},
+  ob_st:{meal:"obed",name:"Vepřové soté s rýží, paprikou a cibulí",time:"25 min",kcal:"~480 kcal",
+    ingredients:[{n:"🏷 Vepřový bok bez kosti",q:"600 g"},{n:"Rýže jasmínová",q:"300 g"},{n:"🏷 Paprika barevná",q:"2 ks"},{n:"Cibule",q:"2 ks"},{n:"Sójová omáčka",q:"3 lžíce"},{n:"Olivový olej",q:"2 lžíce"},{n:"Česnek, sůl, pepř",q:"dle chuti"}],
+    instructions:"Rýži uvařte. Maso nakrájejte na kostičky, opečte na oleji 8 minut. Přidejte nakrájenou papriku a cibuli, opékejte dalších 5 minut. Zalijte sójovou omáčkou a česnekem, duste 3 minuty.",
+    tip:"Maso opékejte na vysokém plameni v malém množství – vzniká chutná kůrčička."},
+  ob_ct:{meal:"obed",name:"Caprese s lososem na toastu",time:"15 min",kcal:"~410 kcal",
+    ingredients:[{n:"🏷 Losos porcovaný",q:"300 g"},{n:"🏷 Mozzarella čerstvá",q:"250 g"},{n:"🏷 Rajčata",q:"2 ks"},{n:"Kváskový chléb",q:"4 plátky"},{n:"Bazalka čerstvá",q:"hrst"},{n:"Olivový olej",q:"2 lžíce"},{n:"Citron, sůl, pepř",q:"dle chuti"}],
+    instructions:"Chléb opečte. Losos nakrájejte na plátky a krátce opečte na oleji 2–3 min z každé strany. Na opečený chléb vrstvěte rajče, mozzarellu a losos. Přelijte olejem, přidejte bazalku a citronovou šťávu.",
+    tip:"Caprese je nejlepší ze zralých rajčat pokojové teploty – ne z lednice."},
+
+  /* ── PLNOHODNOTNÉ VEČEŘE (Pá, So, Ne) ── */
+  ve_pa:{meal:"vecere",name:"Grilovaný losos s cuketovými plackami a rajčatovou salsou",time:"50 min",kcal:"~530 kcal",
+    ingredients:[{n:"🏷 Losos porcovaný",q:"800 g"},{n:"🏷 Cuketa",q:"2 ks"},{n:"🏷 Rajčata",q:"300 g"},{n:"Vejce",q:"2 ks"},{n:"Strouhanka",q:"4 lžíce"},{n:"Česnek",q:"3 stroužky"},{n:"Olivový olej, citron",q:"3 lžíce / 1 ks"},{n:"Koriandr nebo petržel, sůl, pepř",q:"dle chuti"}],
+    instructions:"Cukety nastrouhejte, osolte a po 10 min vyžměte. Smíchejte s vejci, strouhankou a kořením. Smažte malé placky 3 min z každé strany. Rajčata nakrájejte s česnekem a koriandrem na salsu. Lososa grilujte kůží dolů 5 min, obraťte a grilujte 3 min.",
+    tip:"Cuketové placky budou křupavé, pokud cukety opravdu dobře vyžmácáte – přebytečná voda je nepřítel."},
+  ve_so:{meal:"vecere",name:"Kuřecí stehna s paprikou, mozzarellou a bylinkami z trouby",time:"55 min",kcal:"~520 kcal",
+    ingredients:[{n:"🏷 Kuřecí prsa (nebo stehna)",q:"1 kg"},{n:"🏷 Paprika barevná",q:"3 ks"},{n:"🏷 Mozzarella čerstvá",q:"250 g"},{n:"Olivový olej",q:"3 lžíce"},{n:"Česnek",q:"4 stroužky"},{n:"Tymián, oregano",q:"čerstvé"},{n:"Sůl, pepř",q:"dle chuti"}],
+    instructions:"Maso osolte, opepřete a vložte do pekáče. Papriku nakrájejte na proužky a přidejte k masu. Zalijte olejem, přidejte česnek a bylinky. Pečte 200°C/35 minut. Na posledních 5 minut položte plátky mozzarelly.",
+    tip:"Mozzarella se při zapékání roztaví a vytvoří krásnou zlatavou vrstvu – nepřesaďte teplotu."},
+  ve_ne:{meal:"vecere",name:"Španělský ptáček s dušenou rýží a okurkovým salátem",time:"80 min",kcal:"~560 kcal",
+    ingredients:[{n:"🏷 Vepřový bok bez kosti",q:"800 g"},{n:"Vejce natvrdo",q:"4 ks"},{n:"Okurka nakládací",q:"4 ks"},{n:"Hořčice, slanina",q:"4 lžíce / 4 plátky"},{n:"Rýže",q:"300 g"},{n:"Vývar hovězí",q:"500 ml"},{n:"Sůl, pepř, bobkový list",q:"dle chuti"}],
+    instructions:"Maso nakrájejte na plátky, naklepejte. Na každý plát dejte hořčici, vejce, okurku a slaninu, zarolujte a zajistěte párátkem. Opečte ze všech stran, zalijte vývarem a duste 50 minut. Rýži uvařte. Podávejte s okurkový salátem.",
+    tip:"Španělský ptáček je klasika – čím déle se dusí, tím je maso měkčí a šťáva aromatičtější."},
+
+  /* ── RYCHLÉ VEČEŘE (Po, Út, St, Čt) ── */
+  ve_po:{meal:"vecere",name:"Zapečené těstoviny s vepřovým masem a mozzarellou",time:"28 min",kcal:"~520 kcal",
+    ingredients:[{n:"Těstoviny penne",q:"300 g"},{n:"🏷 Vepřový bok bez kosti",q:"400 g"},{n:"🏷 Mozzarella čerstvá",q:"250 g"},{n:"Passata rajčatová",q:"300 ml"},{n:"Česnek",q:"2 stroužky"},{n:"Olivový olej, oregano",q:"2 lžíce / dle chuti"},{n:"Sůl, pepř",q:"dle chuti"}],
+    instructions:"Těstoviny uvařte al dente. Maso nakrájejte na kostičky, opečte 7 minut. Přidejte passatu a česnek, duste 5 minut. Smíchejte těstoviny s omáčkou v zapékací misce, navrch roztrhejte mozzarellu. Zapékejte 200°C/10 minut.",
+    tip:"Před vložením do trouby nechte omáčku trochu zhustnout – těstoviny pak nerozmoknou."},
+  ve_ut:{meal:"vecere",name:"Kuřecí strips s paprikovou omáčkou a kváskový chléb",time:"20 min",kcal:"~410 kcal",
+    ingredients:[{n:"🏷 Kuřecí prsa",q:"500 g"},{n:"🏷 Paprika barevná",q:"2 ks"},{n:"Smetana 20%",q:"150 ml"},{n:"Cibule",q:"1 ks"},{n:"Kváskový chléb",q:"4 plátky"},{n:"Olivový olej, paprika mletá",q:"2 lžíce / 1 lžička"},{n:"Sůl, pepř",q:"dle chuti"}],
+    instructions:"Kuřecí prsa nakrájejte na proužky, opečte na oleji 7–8 minut. Cibuli a papriku nakrájejte a přidejte, smažte 4 minuty. Přilijte smetanu, dochuťte mletou paprikou, solí a pepřem, duste 3 minuty. Podávejte s opečeným chlebem.",
+    tip:"Smetanu přidávejte až do vroucí omáčky najednou – nestrazí se a omáčka bude hladká."},
+  ve_st:{meal:"vecere",name:"Vajíčka šakšuka s rajčaty, paprikou a chlebem",time:"20 min",kcal:"~360 kcal",
+    ingredients:[{n:"🏷 Vejce L",q:"8 ks"},{n:"🏷 Rajčata",q:"400 g"},{n:"🏷 Paprika barevná",q:"2 ks"},{n:"Cibule",q:"1 ks"},{n:"Olivový olej",q:"2 lžíce"},{n:"Kmín, paprika mletá, chilli",q:"dle chuti"},{n:"Celozrnný chléb",q:"4 plátky"}],
+    instructions:"Cibuli a papriku nakrájejte a osmažte na oleji 5 minut. Přidejte nakrájená rajčata a koření, vařte 5 minut. Do omáčky prolomte vejce, přikryjte a vařte 5–6 minut dokud bílky neztuhlá. Podávejte s chlebem.",
+    tip:"Žloutek nechte polotekutý – to je tajemství dokonalé šakšuky."},
+  ve_ct:{meal:"vecere",name:"Vepřové kostičky na česneku a bylinkách s chlebem",time:"20 min",kcal:"~400 kcal",
+    ingredients:[{n:"🏷 Vepřový bok bez kosti",q:"500 g"},{n:"Česnek",q:"4 stroužky"},{n:"Rozmarýn, tymián",q:"čerstvé"},{n:"Olivový olej",q:"3 lžíce"},{n:"Kváskový chléb",q:"4 plátky"},{n:"Sůl, pepř",q:"dle chuti"}],
+    instructions:"Maso nakrájejte na kostičky 2 cm. Na oleji opečte česnek 1 minutu, přidejte maso a byliny. Opékejte 12–15 minut na středním plameni, občas promíchejte. Chléb opečte. Podávejte maso s chlebem a šťávou z pánve.",
+    tip:"Maso nekryjte – vlhkost se odpařuje a vzniká bohatá, karamelizovaná vrstva."}
+};
+
+/* ─── WEATHER ─── */
+const weatherData = [
+  {date:"2026-06-05",abbr:"Pá",full:"Pátek",   id:"pa",max:24,min:14,icon:"☀️"},
+  {date:"2026-06-06",abbr:"So",full:"Sobota",  id:"so",max:26,min:15,icon:"☀️"},
+  {date:"2026-06-07",abbr:"Ne",full:"Neděle",  id:"ne",max:23,min:14,icon:"🌤️"},
+  {date:"2026-06-08",abbr:"Po",full:"Pondělí", id:"po",max:21,min:12,icon:"⛅"},
+  {date:"2026-06-09",abbr:"Út",full:"Úterý",   id:"ut",max:20,min:11,icon:"⛅"},
+  {date:"2026-06-10",abbr:"St",full:"Středa",  id:"st",max:22,min:13,icon:"🌤️"},
+  {date:"2026-06-11",abbr:"Čt",full:"Čtvrtek", id:"ct",max:25,min:14,icon:"☀️"}
+];
+
+/* ─── KAUFLAND DEALS ─── */
+const kauflandDeals = [
+  {name:"Kuřecí prsa",      price:"99,90 Kč/kg",    pct:42},
+  {name:"Vepřový bok",      price:"89,90 Kč/kg",    pct:51},
+  {name:"Losos porcovaný",  price:"149,90 Kč/kg",   pct:35},
+  {name:"Mozzarella čerstvá",price:"19,90 Kč/125g", pct:38},
+  {name:"Řecký jogurt",     price:"14,90 Kč/400g",  pct:28},
+  {name:"Rajčata",          price:"24,90 Kč/500g",  pct:30},
+  {name:"Paprika barevná",  price:"29,90 Kč/3 ks",  pct:40},
+  {name:"Cuketa",           price:"19,90 Kč/kg",    pct:35},
+  {name:"Vejce L",          price:"49,90 Kč/10 ks", pct:25}
+];
+
+/* ─── MEAL PLAN ─── */
+const mealPlan = [
+  {id:"pa",sn:"sn_pa",ob:"ob_pa",ve:"ve_pa"},
+  {id:"so",sn:"sn_so",ob:"ob_so",ve:"ve_so"},
+  {id:"ne",sn:"sn_ne",ob:"ob_ne",ve:"ve_ne"},
+  {id:"po",sn:"sn_po",ob:"ob_po",ve:"ve_po"},
+  {id:"ut",sn:"sn_ut",ob:"ob_ut",ve:"ve_ut"},
+  {id:"st",sn:"sn_st",ob:"ob_st",ve:"ve_st"},
+  {id:"ct",sn:"sn_ct",ob:"ob_ct",ve:"ve_ct"}
+];
+
+/* ─── SHOPPING LIST ─── */
+const shoppingItems = [
+  /* Kaufland AKCE */
+  {id:"k1",name:"Kuřecí prsa",         qty:"1,5 kg",    price:149.85,akce:true, note:"99,90 Kč/kg · -42 %", dm:"pa:obed po:obed so:vecere ut:vecere"},
+  {id:"k2",name:"Vepřový bok bez kosti",qty:"1,5 kg",   price:134.85,akce:true, note:"89,90 Kč/kg · -51 %", dm:"st:obed ne:vecere po:vecere ct:vecere"},
+  {id:"k3",name:"Losos porcovaný",     qty:"1,2 kg",    price:179.88,akce:true, note:"149,90 Kč/kg · -35 %", dm:"so:obed pa:vecere ct:obed ne:snidane"},
+  {id:"k4",name:"Mozzarella čerstvá",  qty:"4 × 125 g", price:79.60, akce:true, note:"19,90 Kč/125g · -38 %", dm:"po:snidane po:obed so:vecere po:vecere ct:obed"},
+  {id:"k5",name:"Řecký jogurt",        qty:"800 g",     price:29.80, akce:true, note:"14,90 Kč/400g · -28 %", dm:"pa:snidane ct:snidane"},
+  {id:"k6",name:"Rajčata čerstvá",     qty:"1,5 kg",    price:74.70, akce:true, note:"24,90 Kč/500g · -30 %", dm:"po:snidane pa:vecere so:vecere ct:obed st:vecere"},
+  {id:"k7",name:"Paprika barevná",     qty:"2 × 3 ks",  price:59.80, akce:true, note:"29,90 Kč/3 ks · -40 %", dm:"st:obed st:snidane so:vecere ut:vecere st:vecere"},
+  {id:"k8",name:"Cuketa",              qty:"3 ks",      price:59.70, akce:true, note:"19,90 Kč/ks · -35 %",   dm:"pa:obed pa:vecere ut:obed"},
+  {id:"k9",name:"Vejce L",             qty:"20 ks",     price:99.80, akce:true, note:"49,90 Kč/10 ks · -25 %", dm:"so:snidane ne:snidane ne:obed ut:obed st:vecere ne:vecere ct:vecere st:snidane"},
+  /* Základní suroviny */
+  {id:"r1", name:"Brambory",                qty:"2 kg",       price:40.00, akce:false, dm:"pa:obed so:obed"},
+  {id:"r2", name:"Celozrnný chléb",         qty:"2 bochníky", price:70.00, akce:false, dm:"po:snidane st:snidane st:vecere ct:vecere"},
+  {id:"r3", name:"Kváskový chléb",          qty:"1 bochník",  price:55.00, akce:false, dm:"ct:obed ut:vecere"},
+  {id:"r4", name:"Celozrnné tortilly",      qty:"4 ks",       price:45.00, akce:false, dm:"po:obed"},
+  {id:"r5", name:"Toustový chléb",          qty:"1 bochník",  price:35.00, akce:false, dm:"so:snidane"},
+  {id:"r6", name:"Anglické mafiny",         qty:"4 ks",       price:35.00, akce:false, dm:"ne:snidane"},
+  {id:"r7", name:"Těstoviny fusilli",       qty:"500 g",      price:30.00, akce:false, dm:"ut:obed"},
+  {id:"r8", name:"Těstoviny penne",         qty:"500 g",      price:30.00, akce:false, dm:"po:vecere"},
+  {id:"r9", name:"Rýže jasmínová",          qty:"500 g",      price:35.00, akce:false, dm:"st:obed ne:vecere"},
+  {id:"r10",name:"Passata rajčatová",       qty:"500 ml",     price:30.00, akce:false, dm:"po:vecere"},
+  {id:"r11",name:"Máslo",                   qty:"250 g",      price:55.00, akce:false, dm:"so:snidane ne:snidane so:obed"},
+  {id:"r12",name:"Mléko",                   qty:"1 L",        price:28.00, akce:false, dm:"ut:snidane so:obed"},
+  {id:"r13",name:"Smetana 20%",             qty:"200 ml",     price:35.00, akce:false, dm:"ut:vecere"},
+  {id:"r14",name:"Parmezán strouhaný",      qty:"100 g",      price:55.00, akce:false, dm:"ut:obed"},
+  {id:"r15",name:"Ovesné vločky",           qty:"500 g",      price:25.00, akce:false, dm:"ut:snidane"},
+  {id:"r16",name:"Banány",                  qty:"4 ks",       price:24.00, akce:false, dm:"ut:snidane"},
+  {id:"r17",name:"Vlašské ořechy",          qty:"100 g",      price:45.00, akce:false, dm:"ut:snidane"},
+  {id:"r18",name:"Med",                     qty:"250 g",      price:55.00, akce:false, dm:"pa:snidane so:snidane ct:snidane"},
+  {id:"r19",name:"Granola",                 qty:"400 g",      price:65.00, akce:false, dm:"pa:snidane ct:snidane"},
+  {id:"r20",name:"Borůvky nebo jahody",     qty:"400 g",      price:55.00, akce:false, dm:"so:snidane pa:snidane ct:snidane"},
+  {id:"r21",name:"Rukola",                  qty:"100 g",      price:30.00, akce:false, dm:"po:obed"},
+  {id:"r22",name:"Baby špenát",             qty:"200 g",      price:40.00, akce:false, dm:"ne:snidane so:obed"},
+  {id:"r23",name:"Česnek",                  qty:"1 hlávka",   price:15.00, akce:false, dm:"pa:obed ut:obed st:obed po:vecere ct:vecere"},
+  {id:"r24",name:"Cibule",                  qty:"3 ks",       price:18.00, akce:false, dm:"st:obed ne:vecere ut:vecere st:vecere"},
+  {id:"r25",name:"Citron",                  qty:"2 ks",       price:20.00, akce:false, dm:"ne:snidane so:obed pa:vecere ct:obed"},
+  {id:"r26",name:"Bazalka čerstvá",         qty:"svazek",     price:25.00, akce:false, dm:"po:snidane ct:obed"},
+  {id:"r27",name:"Rozmarýn a tymián",       qty:"svazky",     price:30.00, akce:false, dm:"pa:obed ct:vecere"},
+  {id:"r28",name:"Sójová omáčka",           qty:"200 ml",     price:30.00, akce:false, dm:"st:obed"},
+  {id:"r29",name:"Olivový olej",            qty:"750 ml",     price:85.00, akce:false, dm:"pa:obed pa:vecere po:snidane po:obed ut:obed st:obed ct:obed ct:vecere"},
+  {id:"r30",name:"Hovězí vývar (kostka)",   qty:"2 ks",       price:20.00, akce:false, dm:"ne:vecere"},
+  {id:"r31",name:"Hořčice",                qty:"100 g",       price:25.00, akce:false, dm:"ne:vecere"},
+  {id:"r32",name:"Slanina",                qty:"100 g",       price:45.00, akce:false, dm:"ne:vecere"},
+  {id:"r33",name:"Okurka nakládací",       qty:"200 g",       price:25.00, akce:false, dm:"ne:vecere"},
+  {id:"r34",name:"Strouhanky",             qty:"200 g",       price:20.00, akce:false, dm:"pa:vecere"},
+  {id:"r35",name:"Hovězí maso na vývar",   qty:"600 g",       price:120.00,akce:false, dm:"ne:obed"}
+];
+
+/* ══════════════════════════════════════════════
+   APP STATE
+══════════════════════════════════════════════ */
+const DAY_ORDER = ['pa','so','ne','po','ut','st','ct'];
+
+const activeDays = new Set(DAY_ORDER);
+const activeMeals = {};
+DAY_ORDER.forEach(d => activeMeals[d] = new Set(['snidane','obed','vecere']));
+
+let shoppingDay = 'pa';
+let showOnlyAkce = false;
+
+/* ══════════════════════════════════════════════
+   RENDERING
+══════════════════════════════════════════════ */
+function renderWeather() {
+  document.getElementById('weather-summary').innerHTML =
+    weatherData.map(d => `<span class="w-chip">${d.abbr} ${d.icon} ${d.max}°C</span>`).join('');
+}
+
+function renderDeals() {
+  document.getElementById('deals-strip').innerHTML = kauflandDeals.map(d =>
+    `<span class="bg-orange-100 text-orange-800 border border-orange-300 px-2 py-0.5 rounded-full font-semibold">
+      ${d.name} <b>${d.price}</b> <span class="text-green-700">-${d.pct}%</span>
+    </span>`).join('');
+}
+
+function getOrderedDays() {
+  if (!shoppingDay) return DAY_ORDER;
+  const idx = DAY_ORDER.indexOf(shoppingDay);
+  return Array.from({length: DAY_ORDER.length}, (_,i) => DAY_ORDER[(idx+1+i) % DAY_ORDER.length]);
+}
+
+function renderDayButtons() {
+  const c = document.getElementById('day-filters');
+  c.innerHTML = '';
+  getOrderedDays().forEach(id => {
+    const w = weatherData.find(d => d.id === id);
+    const btn = document.createElement('button');
+    btn.className = 'btn-day' + (activeDays.has(id) ? ' active' : '');
+    btn.dataset.dayId = id;
+    btn.textContent = w.abbr + ' ' + w.date.slice(8) + '.';
+    btn.onclick = () => toggleDay(id, btn);
+    c.appendChild(btn);
+  });
+}
+
+function renderDays() {
+  const container = document.getElementById('days-container');
+  container.innerHTML = '';
+  const ordered = getOrderedDays();
+  ordered.forEach(id => {
+    const w = weatherData.find(d => d.id === id);
+    const plan = mealPlan.find(p => p.id === id);
+    const isWeekend = ['pa','so','ne'].includes(id);
+
+    const div = document.createElement('div');
+    div.className = 'day-card';
+    div.id = 'day-' + id;
+    div.dataset.day = id;
+    div.style.display = activeDays.has(id) ? '' : 'none';
+
+    div.innerHTML = `
+      <div class="day-head">
+        <div>
+          <div class="day-title">${w.full} <span style="font-weight:400;font-size:13px;color:#718096">${w.date.slice(8)}.${w.date.slice(5,7)}.</span>
+            ${isWeekend ? '<span class="weekend-badge ml-2">Víkend</span>' : ''}
+          </div>
+          <div class="day-meta">${w.icon} ${w.max}° / ${w.min}°C</div>
+        </div>
+        <div class="meal-btns">
+          <button class="meal-btn active" data-meal="snidane" onclick="toggleMealBtn('${id}','snidane',this)">Sn</button>
+          <button class="meal-btn active" data-meal="obed"    onclick="toggleMealBtn('${id}','obed',this)">Ob</button>
+          <button class="meal-btn active" data-meal="vecere"  onclick="toggleMealBtn('${id}','vecere',this)">Ve</button>
+        </div>
+      </div>
+      ${renderMealRow('snidane', 'Snídaně', 't-sn', recipes[plan.sn], id)}
+      ${renderMealRow('obed',    'Oběd',    't-ob', recipes[plan.ob], id)}
+      ${renderMealRow('vecere',  'Večeře',  't-ve', recipes[plan.ve], id)}
+    `;
+    container.appendChild(div);
+  });
+}
+
+function renderMealRow(mealKey, label, cls, r, dayId) {
+  if (!r) return '';
+  const akceItems = r.ingredients.filter(i => i.n.startsWith('🏷')).map(i => i.n.replace('🏷 ',''));
+  return `
+    <div class="meal-row" data-meal="${mealKey}" id="mrow-${dayId}-${mealKey}">
+      <div class="meal-type-label ${cls}">${label}</div>
+      <div class="meal-card" onclick="openModal('${dayId}','${mealKey}')">
+        <div class="meal-name">${r.name}</div>
+        <div class="meal-info">
+          <span>⏱ ${r.time}</span><span>🔥 ${r.kcal}</span>
+        </div>
+        ${akceItems.length ? `<div class="akce-tags">${akceItems.map(a=>`<span class="akce-tag">🏷 ${a}</span>`).join('')}</div>` : ''}
+      </div>
+    </div>`;
+}
+
+/* ══════════════════════════════════════════════
+   FILTERS
+══════════════════════════════════════════════ */
+function toggleDay(id, btn) {
+  if (activeDays.has(id)) activeDays.delete(id);
+  else activeDays.add(id);
+  btn.classList.toggle('active', activeDays.has(id));
+  const card = document.getElementById('day-' + id);
+  if (card) card.style.display = activeDays.has(id) ? '' : 'none';
+  updateShoppingVisibility();
+  recalcTotal();
+}
+
+function toggleAllDays(on) {
+  DAY_ORDER.forEach(d => on ? activeDays.add(d) : activeDays.delete(d));
+  document.querySelectorAll('.btn-day').forEach(b => b.classList.toggle('active', on));
+  document.querySelectorAll('.day-card').forEach(c => c.style.display = on ? '' : 'none');
+  updateShoppingVisibility();
+  recalcTotal();
+}
+
+function toggleMealBtn(dayId, meal, btn) {
+  const isActive = !btn.classList.contains('active');
+  btn.classList.toggle('active', isActive);
+  if (isActive) activeMeals[dayId].add(meal);
+  else activeMeals[dayId].delete(meal);
+  const row = document.getElementById('mrow-' + dayId + '-' + meal);
+  if (row) row.style.display = isActive ? '' : 'none';
+  updateShoppingVisibility();
+  recalcTotal();
+}
+
+function setShoppingDay(d) {
+  shoppingDay = d;
+  renderDayButtons();
+  reorderDayCards();
+  updateShoppingInfo();
+  updateShoppingVisibility();
+  recalcTotal();
+}
+
+function reorderDayCards() {
+  const c = document.getElementById('days-container');
+  getOrderedDays().forEach(id => {
+    const card = document.getElementById('day-' + id);
+    if (card) c.appendChild(card);
+  });
+}
+
+function updateShoppingInfo() {
+  const el = document.getElementById('shopping-info');
+  if (!shoppingDay) { el.textContent = ''; return; }
+  const w = weatherData.find(d => d.id === shoppingDay);
+  el.innerHTML = w ? `🛒 Nakupujete v <b>${w.full}</b>` : '';
+}
+
+function setAkceFilter(checked) {
+  showOnlyAkce = checked;
+  updateShoppingVisibility();
+  recalcTotal();
+}
+
+function isItemVisible(item) {
+  if (!item.dm) return activeDays.size > 0;
+  const pairs = item.dm.trim().split(/\s+/);
+  return pairs.some(pair => {
+    const [day, meal] = pair.split(':');
+    return activeDays.has(day) && activeMeals[day] && activeMeals[day].has(meal);
+  });
+}
+
+function updateShoppingVisibility() {
+  let lastHdr = null, secHasItems = false;
+  document.querySelectorAll('#shopping-body tr').forEach(row => {
+    if (row.classList.contains('shop-section-header')) {
+      if (lastHdr) lastHdr.style.display = secHasItems ? '' : 'none';
+      lastHdr = row; secHasItems = false;
+      return;
+    }
+    const id = row.dataset.itemId;
+    const item = shoppingItems.find(i => i.id === id);
+    let vis = item ? isItemVisible(item) : false;
+    if (showOnlyAkce && item && !item.akce) vis = false;
+    row.style.display = vis ? '' : 'none';
+    if (vis) secHasItems = true;
+  });
+  if (lastHdr) lastHdr.style.display = secHasItems ? '' : 'none';
+}
+
+function recalcTotal() {
+  let total = 0;
+  document.querySelectorAll('#shopping-body tr').forEach(row => {
+    if (row.classList.contains('shop-section-header') || row.style.display === 'none') return;
+    const chk = row.querySelector('input[type=checkbox]');
+    if (chk && !chk.checked) total += parseFloat(row.dataset.price || 0);
+  });
+  document.getElementById('total-price').textContent = total.toFixed(2).replace('.', ',');
+}
+
+function toggleShopRow(row) {
+  row.classList.toggle('checked-row', row.querySelector('input').checked);
+  recalcTotal();
+}
+
+/* ══════════════════════════════════════════════
+   SHOPPING RENDER
+══════════════════════════════════════════════ */
+function renderShopping() {
+  const tbody = document.getElementById('shopping-body');
+  tbody.innerHTML = '';
+  let lastSection = null;
+  shoppingItems.forEach(item => {
+    const sec = item.akce ? 'akce' : 'base';
+    if (sec !== lastSection) {
+      lastSection = sec;
+      const label = item.akce
+        ? '🏷️ KAUFLAND AKCE (3. 6. – 9. 6. 2026) – Léto v plném proudu'
+        : '📦 Základní suroviny';
+      tbody.insertAdjacentHTML('beforeend',
+        `<tr class="shop-section-header"><td colspan="5">${label}</td></tr>`);
+    }
+    tbody.insertAdjacentHTML('beforeend',
+      `<tr class="${item.akce ? 'row-akce' : ''} border-b hover:bg-gray-50"
+          data-price="${item.price}" data-item-id="${item.id}">
+        <td class="p-2"><input type="checkbox" onchange="toggleShopRow(this.closest('tr'))"
+            class="w-4 h-4 cursor-pointer" style="accent-color:var(--c-checked)"></td>
+        <td class="p-2 font-medium text-sm">${item.name}</td>
+        <td class="p-2 text-center text-sm text-gray-600">${item.qty}</td>
+        <td class="p-2 text-right text-sm font-semibold">${item.price.toFixed(2).replace('.',',')} Kč</td>
+        <td class="p-2 text-xs text-gray-400 hidden sm:table-cell">${item.note||''}</td>
+      </tr>`);
+  });
+}
+
+/* ══════════════════════════════════════════════
+   MODAL
+══════════════════════════════════════════════ */
+function openModal(dayId, mealKey) {
+  const plan = mealPlan.find(p => p.id === dayId);
+  const key = mealKey === 'snidane' ? plan.sn : mealKey === 'obed' ? plan.ob : plan.ve;
+  const r = recipes[key]; if (!r) return;
+  const colors = {snidane:'var(--c-breakfast)',obed:'var(--c-lunch)',vecere:'var(--c-dinner)'};
+  const sc = colors[mealKey];
+  document.getElementById('modal-body').innerHTML = `
+    <h2 class="text-xl font-bold mt-1 mb-1" style="color:${sc}">${r.name}</h2>
+    <p class="text-sm text-gray-500 mb-3">⏱ ${r.time} | 🔥 ${r.kcal} | 👥 4 osoby</p>
+    <h3 class="font-bold border-b pb-1 mb-2" style="color:${sc}">Ingredience</h3>
+    <ul class="space-y-1 mb-4">
+      ${r.ingredients.map(i=>`<li class="flex justify-between text-sm border-b border-gray-50 py-1">
+        <span>${i.n}</span><span class="text-gray-500 font-medium">${i.q}</span></li>`).join('')}
+    </ul>
+    <h3 class="font-bold border-b pb-1 mb-2" style="color:${sc}">Postup</h3>
+    <p class="text-sm leading-relaxed mb-3">${r.instructions}</p>
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-sm text-yellow-800">
+      👨‍🍳 <b>Tip kuchaře:</b> ${r.tip}
+    </div>
+  `;
+  document.getElementById('recipe-modal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('recipe-modal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+/* ══════════════════════════════════════════════
+   EXPORT
+══════════════════════════════════════════════ */
+function generatePDF() {
+  const rows = [];
+  document.querySelectorAll('#shopping-body tr').forEach(row => {
+    if (row.style.display === 'none') return;
+    const hd = row.querySelector('td[colspan]');
+    if (hd) { rows.push([{text:hd.textContent,bold:true,colSpan:4,fillColor:'#f0f0f0',fontSize:9},'','','']); return; }
+    const chk = row.querySelector('input'); const done = chk && chk.checked;
+    const tds = row.querySelectorAll('td:not(:first-child):not(:last-child)');
+    rows.push([
+      {text:done?'✓':'○',alignment:'center',fontSize:9,color:done?'#d32f2f':'#999'},
+      {text:tds[0]?.textContent||'',fontSize:9,decoration:done?'lineThrough':null},
+      {text:tds[1]?.textContent||'',fontSize:9,alignment:'center'},
+      {text:tds[2]?.textContent||'',fontSize:9,alignment:'right'}
+    ]);
+  });
+  pdfMake.createPdf({
+    content:[
+      {text:'🥗 Nákupní seznam – Jídelníček 5. 6. – 11. 6. 2026',style:'h'},
+      {text:'Kaufland akce 3.6.–9.6.: Kuřecí prsa -42% | Vepřový bok -51% | Losos -35% | Mozzarella -38% | Rajčata -30%',style:'sub'},
+      {table:{widths:[18,'*',80,80],body:[
+        [{text:'',bold:true},{text:'Položka',bold:true,fontSize:9},{text:'Množství',bold:true,fontSize:9,alignment:'center'},{text:'Cena',bold:true,fontSize:9,alignment:'right'}],
+        ...rows
+      ]},layout:'lightHorizontalLines'},
+      {text:`\nCELKEM: ${document.getElementById('total-price').textContent} Kč`,style:'tot'}
+    ],
+    styles:{
+      h:  {fontSize:13,bold:true,margin:[0,0,0,4]},
+      sub:{fontSize:9,color:'#ff6f00',margin:[0,0,0,8]},
+      tot:{fontSize:12,bold:true,alignment:'right',color:'#2e7d32'}
+    },
+    pageSize:'A4',pageMargins:[28,28,28,28]
+  }).download('nakupni-seznam-05-06-26.pdf');
+  showToast('📄 PDF stahování zahájeno');
+}
+
+function copyShoppingText() {
+  const lines = ['NÁKUPNÍ SEZNAM – 5. 6. – 11. 6. 2026',''];
+  document.querySelectorAll('#shopping-body tr').forEach(row => {
+    if (row.style.display === 'none') return;
+    const hd = row.querySelector('td[colspan]');
+    if (hd) { lines.push('\n' + hd.textContent); return; }
+    const chk = row.querySelector('input');
+    if (chk && chk.checked) return;
+    const tds = row.querySelectorAll('td:not(:first-child):not(:last-child)');
+    lines.push(`${tds[0]?.textContent||''} — ${tds[1]?.textContent||''} — ${tds[2]?.textContent||''}`);
+  });
+  lines.push(`\nCelkem: ${document.getElementById('total-price').textContent} Kč`);
+  navigator.clipboard.writeText(lines.join('\n')).then(()=>showToast('📋 Zkopírováno do schránky'));
+}
+
+/* ══════════════════════════════════════════════
+   EMAIL
+══════════════════════════════════════════════ */
+function sendEmailPlan() {
+  const lines = [];
+  document.querySelectorAll('#shopping-body tr').forEach(row => {
+    if (row.style.display === 'none') return;
+    const hd = row.querySelector('td[colspan]');
+    if (hd) { lines.push(hd.textContent); return; }
+    const tds = row.querySelectorAll('td:not(:first-child):not(:last-child)');
+    lines.push(`${tds[0]?.textContent||''} | ${tds[1]?.textContent||''} | ${tds[2]?.textContent||''}`);
+  });
+  const planLines = [];
+  mealPlan.forEach(p => {
+    const w = weatherData.find(d => d.id === p.id);
+    planLines.push(`${w.full} ${w.date.slice(8)}.${w.date.slice(5,7)}.`);
+    planLines.push(`  Sn: ${recipes[p.sn]?.name||''}`);
+    planLines.push(`  Ob: ${recipes[p.ob]?.name||''}`);
+    planLines.push(`  Ve: ${recipes[p.ve]?.name||''}`);
+  });
+  emailjs.send('service_2h3ehkd','template_seall0o',{
+    subject: 'Jídelníček 5. 6. – 11. 6. 2026',
+    shopping_list: lines.join('\n'),
+    meal_plan: planLines.join('\n'),
+    total: document.getElementById('total-price').textContent + ' Kč'
+  }).then(()=>showToast('✉️ E-mail odeslán!')).catch(()=>showToast('❌ Chyba odesílání'));
+}
+
+/* ══════════════════════════════════════════════
+   UTILS
+══════════════════════════════════════════════ */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3000);
+}
+
+/* ══════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  renderWeather();
+  renderDeals();
+  renderDayButtons();
+  renderDays();
+  renderShopping();
+  updateShoppingInfo();
+  updateShoppingVisibility();
+  recalcTotal();
+});
+</script>
+</body>
+</html>
