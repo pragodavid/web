@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dejva NET — Traffic Monitor</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+  :root {
+    --bg:#f5f6f8; --fg:#1a1a1a; --card-bg:#ffffff; --border:#dcdfe4;
+    --accent:#5b8def; --muted:#6b7280;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#14161a; --fg:#e8e9ec; --card-bg:#1d2025; --border:#2c2f36;
+      --accent:#5b8def; --muted:#9aa1ac;
+    }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:var(--bg); color:var(--fg); padding:16px; }
+  h1 { font-size:1.4rem; margin:0 0 4px; }
+  .subtitle { color:var(--muted); margin-bottom:16px; font-size:.85rem; }
+  .tabs { display:flex; gap:8px; margin-bottom:16px; }
+  .tab-btn { background:var(--card-bg); color:var(--fg); border:1px solid var(--border);
+    border-radius:8px; padding:8px 16px; cursor:pointer; font-size:.9rem; }
+  .tab-btn.active { border-color:var(--accent); color:var(--accent); font-weight:600; }
+  .panel { display:none; }
+  .panel.active { display:block; }
+  .card { background:var(--card-bg); border:1px solid var(--border); border-radius:10px;
+    padding:16px; margin-bottom:16px; overflow-x:auto; }
+  .range-switch { display:flex; gap:8px; margin-bottom:12px; }
+  .range-btn { background:var(--card-bg); color:var(--fg); border:1px solid var(--border);
+    border-radius:6px; padding:4px 12px; cursor:pointer; font-size:.85rem; }
+  .range-btn.active { border-color:var(--accent); color:var(--accent); font-weight:600; }
+  .target-btn { background:var(--card-bg); color:var(--fg); border:1px solid var(--border);
+    border-radius:6px; padding:4px 12px; cursor:pointer; font-size:.85rem; }
+  .target-btn.active { border-color:var(--accent); color:var(--accent); font-weight:600; }
+  table { width:100%; border-collapse:collapse; min-width:480px; }
+  th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--border);
+    font-size:.85rem; white-space:nowrap; }
+  th { color:var(--muted); font-weight:600; }
+  .ip { color:var(--muted); font-size:.78rem; }
+  .swatch { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; }
+  canvas { max-height:360px; }
+  .empty-msg { color:var(--muted); text-align:center; padding:32px 0; font-size:.9rem; }
+  @media (max-width:600px) { h1 { font-size:1.2rem; } .card { padding:10px; } }
+</style>
+</head>
+<body>
+  <h1>Dejva NET — Traffic Monitor</h1>
+  <div class="subtitle" id="status">Připojuji…</div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="live">Live</button>
+    <button class="tab-btn" data-tab="history">Historie</button>
+    <button class="tab-btn" data-tab="quality">Kvalita linky</button>
+  </div>
+  <div class="panel active" id="panel-live">
+    <div class="card">
+      <canvas id="live-chart"></canvas>
+      <div class="empty-msg" id="live-empty" style="display:none">Žádný aktivní provoz…</div>
+    </div>
+    <div class="card">
+      <table>
+        <thead><tr><th>#</th><th>Zařízení</th><th>IP</th><th>Mb/s</th></tr></thead>
+        <tbody id="live-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="panel" id="panel-history">
+    <div class="range-switch">
+      <button class="range-btn" data-hours="1">1h</button>
+      <button class="range-btn" data-hours="6">6h</button>
+      <button class="range-btn active" data-hours="24">24h</button>
+    </div>
+    <div class="card">
+      <canvas id="history-chart"></canvas>
+      <div class="empty-msg" id="history-empty" style="display:none">
+        Žádná data pro zvolené období. NetFlow soubory se zapisují každých 5 minut.
+      </div>
+    </div>
+    <div class="card">
+      <table>
+        <thead><tr><th>#</th><th>Zařízení</th><th>IP</th><th>Staženo</th><th>Odesláno</th><th>Spojení</th></tr></thead>
+        <tbody id="history-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-quality">
+    <div class="range-switch">
+      <button class="target-btn active" data-target="8.8.8.8">8.8.8.8</button>
+      <button class="target-btn" data-target="1.1.1.1">1.1.1.1</button>
+      <button class="target-btn" data-target="isp-gateway">ISP gateway</button>
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom:8px;font-size:.9rem;color:var(--muted)">Latence (ms) — posledních 24h</h3>
+      <canvas id="latency-chart"></canvas>
+      <div class="empty-msg" id="latency-empty" style="display:none">Sběr dat probíhá, data budou k dispozici za několik minut.</div>
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom:8px;font-size:.9rem;color:var(--muted)">Packet loss (%) — posledních 24h</h3>
+      <canvas id="loss-chart"></canvas>
+      <div class="empty-msg" id="loss-empty" style="display:none">Sběr dat probíhá, data budou k dispozici za několik minut.</div>
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom:8px;font-size:.9rem;color:var(--muted)">Rychlost linky (Mbps) — posledních 7 dní</h3>
+      <canvas id="speed-chart"></canvas>
+      <div class="empty-msg" id="speed-empty" style="display:none">Sběr dat probíhá, data budou k dispozici za několik minut.</div>
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom:8px;font-size:.9rem;color:var(--muted)">Výpadky (posledních 7 dní)</h3>
+      <table>
+        <thead><tr><th>Čas</th><th>Cíl</th><th>Doba trvání</th></tr></thead>
+        <tbody id="outages-table-body"></tbody>
+      </table>
+      <div class="empty-msg" id="outages-empty" style="display:none">Žádné zaznamenané výpadky.</div>
+    </div>
+  </div>
+<script>
+function hashHue(ip) {
+  let h = 0;
+  for (let i = 0; i < ip.length; i++) h = (h * 31 + ip.charCodeAt(i)) >>> 0;
+  return h % 360;
+}
+function colorForIp(ip) { return `hsl(${hashHue(ip)},65%,55%)`; }
+function formatBytes(b) {
+  if (b >= 1e9) return (b/1e9).toFixed(2)+' GB';
+  if (b >= 1e6) return (b/1e6).toFixed(2)+' MB';
+  if (b >= 1e3) return (b/1e3).toFixed(1)+' kB';
+  return b+' B';
+}
+
+// --- TAB ---
+const tabButtons = document.querySelectorAll('.tab-btn');
+const panels = { live: document.getElementById('panel-live'), history: document.getElementById('panel-history'), quality: document.getElementById('panel-quality') };
+tabButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    tabButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    Object.values(panels).forEach(p => p.classList.remove('active'));
+    panels[btn.dataset.tab].classList.add('active');
+    if (btn.dataset.tab === 'live') {
+      startLive();
+    } else {
+      stopLive();
+      if (btn.dataset.tab === 'history') loadHistory();
+      if (btn.dataset.tab === 'quality') loadQuality();
+    }
+  });
+});
+
+// --- LIVE (polling každé 3s — bez SSE, funguje přes Cloudflare) ---
+const LIVE_WINDOW = 60;
+let liveChart = null, liveLabels = [], liveSeries = {}, liveInterval = null;
+
+function ensureLiveChart() {
+  if (liveChart) return;
+  liveChart = new Chart(document.getElementById('live-chart'), {
+    type: 'line',
+    data: { labels: liveLabels, datasets: [] },
+    options: {
+      responsive: true, animation: false,
+      interaction: { mode:'index', intersect:false },
+      plugins: { legend: { position:'bottom' } },
+      scales: {
+        x: { display:false },
+        y: { beginAtZero:true, stacked:true, title:{ display:true, text:'Mb/s' } }
+      }
+    }
+  });
+}
+
+function pushLivePoint(payload) {
+  const label = new Date(payload.timestamp).toLocaleTimeString('cs-CZ');
+  liveLabels.push(label);
+  if (liveLabels.length > LIVE_WINDOW) liveLabels.shift();
+  const seen = new Set();
+  for (const d of payload.devices) {
+    seen.add(d.ip);
+    if (!liveSeries[d.ip]) {
+      liveSeries[d.ip] = {
+        label: d.name, ip: d.ip,
+        data: Array(liveLabels.length - 1).fill(0),
+        borderColor: colorForIp(d.ip),
+        backgroundColor: colorForIp(d.ip) + '55',
+        fill: true, tension: 0.3, pointRadius: 0,
+      };
+    }
+    liveSeries[d.ip].data.push(parseFloat((d.bps / 1e6).toFixed(3)));
+    if (liveSeries[d.ip].data.length > LIVE_WINDOW) liveSeries[d.ip].data.shift();
+  }
+  for (const ip of Object.keys(liveSeries)) {
+    if (!seen.has(ip)) {
+      liveSeries[ip].data.push(0);
+      if (liveSeries[ip].data.length > LIVE_WINDOW) liveSeries[ip].data.shift();
+    }
+  }
+  ensureLiveChart();
+  liveChart.data.labels = liveLabels;
+  liveChart.data.datasets = Object.values(liveSeries);
+  liveChart.update('none');
+  const topDevices = payload.devices.slice(0, 15);
+  const empty = document.getElementById('live-empty');
+  const canvas = document.getElementById('live-chart');
+  if (topDevices.length === 0) {
+    empty.style.display = 'block'; canvas.style.display = 'none';
+  } else {
+    empty.style.display = 'none'; canvas.style.display = 'block';
+    const tbody = document.getElementById('live-table-body');
+    tbody.innerHTML = '';
+    topDevices.forEach((d, i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${i+1}</td>
+        <td><span class="swatch" style="background:${colorForIp(d.ip)}"></span>${d.name}</td>
+        <td class="ip">${d.ip}</td>
+        <td>${(d.bps/1e6).toFixed(3)}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+}
+
+async function fetchSnapshot() {
+  try {
+    const res = await fetch('api/traffic/snapshot');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const payload = await res.json();
+    if (payload.timestamp !== undefined) {
+      pushLivePoint(payload);
+      document.getElementById('status').textContent =
+        'Live • ' + new Date(payload.timestamp).toLocaleTimeString('cs-CZ');
+    }
+  } catch (e) {
+    document.getElementById('status').textContent = 'Live • chyba spojení, zkouším znovu…';
+  }
+}
+
+function startLive() {
+  if (liveInterval) return;
+  fetchSnapshot();
+  liveInterval = setInterval(fetchSnapshot, 3000);
+}
+function stopLive() {
+  if (liveInterval) { clearInterval(liveInterval); liveInterval = null; }
+}
+
+// --- HISTORIE ---
+let historyChart = null, currentHours = 24;
+document.querySelectorAll('.range-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentHours = Number(btn.dataset.hours);
+    loadHistory();
+  });
+});
+
+async function loadHistory() {
+  document.getElementById('history-empty').style.display = 'none';
+  document.getElementById('history-chart').style.display = 'block';
+  try {
+    const res = await fetch(`api/traffic/history?hours=${currentHours}`);
+    const data = await res.json();
+    if (!Array.isArray(data)) {
+      document.getElementById('status').textContent = 'Chyba historie: ' + (data.error || 'neznámá');
+      return;
+    }
+    if (data.length === 0) {
+      document.getElementById('history-empty').style.display = 'block';
+      document.getElementById('history-chart').style.display = 'none';
+      document.getElementById('history-table-body').innerHTML = '';
+      return;
+    }
+    renderHistoryChart(data.slice(0, 10));
+    renderHistoryTable(data);
+  } catch (e) {
+    document.getElementById('status').textContent = 'Chyba při načítání historie: ' + e.message;
+  }
+}
+
+function renderHistoryChart(top) {
+  const labels = top.map(d => d.name);
+  const values = top.map(d => parseFloat(((d.bytes_in + d.bytes_out) / 1e6).toFixed(2)));
+  const colors = top.map(d => colorForIp(d.ip));
+  const ctx = document.getElementById('history-chart');
+  if (!historyChart) {
+    historyChart = new Chart(ctx, {
+      type: 'bar',
+      data: { labels, datasets: [{ label:'Provoz (MB)', data:values, backgroundColor:colors }] },
+      options: {
+        responsive: true,
+        plugins: { legend: { display:false } },
+        scales: { y: { beginAtZero:true, title:{ display:true, text:'MB' } } }
+      }
+    });
+  } else {
+    historyChart.data.labels = labels;
+    historyChart.data.datasets[0].data = values;
+    historyChart.data.datasets[0].backgroundColor = colors;
+    historyChart.update();
+  }
+}
+
+function renderHistoryTable(data) {
+  const tbody = document.getElementById('history-table-body');
+  tbody.innerHTML = '';
+  data.forEach((d, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${i+1}</td>
+      <td><span class="swatch" style="background:${colorForIp(d.ip)}"></span>${d.name}</td>
+      <td class="ip">${d.ip}</td>
+      <td>${formatBytes(d.bytes_in)}</td>
+      <td>${formatBytes(d.bytes_out)}</td>
+      <td>${d.flows}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// --- KVALITA LINKY ---
+let latencyChart = null, lossChart = null, speedChart = null;
+let currentTarget = '8.8.8.8';
+
+document.querySelectorAll('#panel-quality .target-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#panel-quality .target-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentTarget = btn.dataset.target;
+    loadQuality();
+  });
+});
+
+function formatDuration(sec) {
+  if (sec < 60) return sec + ' s';
+  if (sec < 3600) return Math.round(sec / 60) + ' min';
+  return (sec / 3600).toFixed(1) + ' h';
+}
+
+async function loadQuality() {
+  await Promise.all([loadLatency(), loadSpeed(), loadOutages()]);
+}
+
+async function loadLatency() {
+  try {
+    const res = await fetch(`api/quality/latency?hours=24&target=${encodeURIComponent(currentTarget)}`);
+    const data = await res.json();
+    const empty1 = document.getElementById('latency-empty');
+    const empty2 = document.getElementById('loss-empty');
+    const c1 = document.getElementById('latency-chart');
+    const c2 = document.getElementById('loss-chart');
+    if (!Array.isArray(data) || data.length === 0) {
+      empty1.style.display = 'block'; c1.style.display = 'none';
+      empty2.style.display = 'block'; c2.style.display = 'none';
+      return;
+    }
+    empty1.style.display = 'none'; c1.style.display = 'block';
+    empty2.style.display = 'none'; c2.style.display = 'block';
+    const labels = data.map(d => new Date(d.timestamp).toLocaleString('cs-CZ', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }));
+    const avgs = data.map(d => d.avg_ms);
+    const losses = data.map(d => d.loss_pct);
+
+    if (!latencyChart) {
+      latencyChart = new Chart(document.getElementById('latency-chart'), {
+        type: 'line',
+        data: { labels, datasets: [{ label: 'Latence (ms)', data: avgs, borderColor: '#5b8def', backgroundColor: '#5b8def33', fill: true, tension: 0.2, pointRadius: 0, spanGaps: true }] },
+        options: { responsive: true, animation: false, scales: { y: { beginAtZero: true, title: { display: true, text: 'ms' } }, x: { ticks: { maxTicksLimit: 8 } } }, plugins: { legend: { display: false } } }
+      });
+    } else {
+      latencyChart.data.labels = labels;
+      latencyChart.data.datasets[0].data = avgs;
+      latencyChart.update();
+    }
+
+    if (!lossChart) {
+      lossChart = new Chart(document.getElementById('loss-chart'), {
+        type: 'line',
+        data: { labels, datasets: [{ label: 'Packet loss (%)', data: losses, borderColor: '#e35d5d', backgroundColor: '#e35d5d33', fill: true, tension: 0.2, pointRadius: 0, spanGaps: true }] },
+        options: { responsive: true, animation: false, scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: '%' } }, x: { ticks: { maxTicksLimit: 8 } } }, plugins: { legend: { display: false } } }
+      });
+    } else {
+      lossChart.data.labels = labels;
+      lossChart.data.datasets[0].data = losses;
+      lossChart.update();
+    }
+  } catch (e) {
+    document.getElementById('status').textContent = 'Chyba při načítání latence: ' + e.message;
+  }
+}
+
+async function loadSpeed() {
+  try {
+    const res = await fetch('api/quality/speed?days=7');
+    const data = await res.json();
+    const empty = document.getElementById('speed-empty');
+    const canvas = document.getElementById('speed-chart');
+    if (!Array.isArray(data) || data.length === 0) {
+      empty.style.display = 'block'; canvas.style.display = 'none';
+      return;
+    }
+    empty.style.display = 'none'; canvas.style.display = 'block';
+    const labels = data.map(d => new Date(d.timestamp).toLocaleString('cs-CZ', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }));
+    const downloads = data.map(d => d.download_mbps);
+    const uploads = data.map(d => d.upload_mbps);
+
+    if (!speedChart) {
+      speedChart = new Chart(document.getElementById('speed-chart'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [
+            { label: 'Download (Mbps)', data: downloads, backgroundColor: '#5b8def' },
+            { label: 'Upload (Mbps)', data: uploads, backgroundColor: '#34d399' },
+          ],
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true, title: { display: true, text: 'Mbps' } }, x: { ticks: { maxTicksLimit: 8 } } }, plugins: { legend: { position: 'bottom' } } }
+      });
+    } else {
+      speedChart.data.labels = labels;
+      speedChart.data.datasets[0].data = downloads;
+      speedChart.data.datasets[1].data = uploads;
+      speedChart.update();
+    }
+  } catch (e) {
+    document.getElementById('status').textContent = 'Chyba při načítání rychlosti: ' + e.message;
+  }
+}
+
+async function loadOutages() {
+  try {
+    const res = await fetch('api/quality/outages?days=7');
+    const data = await res.json();
+    const tbody = document.getElementById('outages-table-body');
+    const empty = document.getElementById('outages-empty');
+    tbody.innerHTML = '';
+    if (!Array.isArray(data) || data.length === 0) {
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+    data.slice().reverse().forEach(o => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${new Date(o.timestamp).toLocaleString('cs-CZ')}</td><td>${o.target}</td><td>${formatDuration(o.duration_s)}</td>`;
+      tbody.appendChild(tr);
+    });
+  } catch (e) {
+    document.getElementById('status').textContent = 'Chyba při načítání výpadků: ' + e.message;
+  }
+}
+
+startLive();
+</script>
+</body>
+</html>
