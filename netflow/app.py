@@ -1,8 +1,10 @@
 import csv
 import io
 import ipaddress
+import json
 import os
 import socket
+import sqlite3
 import subprocess
 import sys
 import threading
@@ -485,6 +487,203 @@ def api_quality_outages():
         })
     result.sort(key=lambda x: x["timestamp"] or "")
     return jsonify(result)
+
+
+# ---------- Kvalita linky v2 (SQLite z netquality-probe) ----------
+
+NETQUALITY_DB = os.path.join(NETQUALITY_DIR, "netquality.db")
+THRESHOLDS_PATH = os.path.join(NETQUALITY_DIR, "thresholds.json")
+NQ_TARGETS = ["router", "isp-gateway", "1.1.1.1", "8.8.8.8"]
+NQ_PUBLIC = ["1.1.1.1", "8.8.8.8"]
+NQ_RANGES = {"1h": (3600, 60), "6h": (21600, 60), "24h": (86400, 300), "7d": (604800, 3600)}
+STATUS_WINDOW = 300     # s — stav se hodnotí z posledních 5 minut
+STALE_AFTER = 180       # s bez heartbeatu sběrače => červená
+COLOR_RANK = {"green": 0, "yellow": 1, "red": 2}
+COLOR_LABEL = {"green": "OK", "yellow": "Zhoršené", "red": "Výpadek"}
+CAUSE_LABEL = {
+    "lan": "domácí síť / router",
+    "isp_access": "přípojka ISP",
+    "isp_upstream": "internet za ISP",
+    "target": "jen tento cíl",
+    "unknown": "neurčeno",
+}
+
+
+def _nq_db():
+    conn = sqlite3.connect(f"file:{NETQUALITY_DB}?mode=ro", uri=True, timeout=5)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def _nq_thresholds():
+    with open(THRESHOLDS_PATH) as f:
+        return json.load(f)
+
+
+def _nq_color(th, target, loss, avg, jitter):
+    t = th["targets"]["public" if target in NQ_PUBLIC else target]
+    if loss is None:
+        return "red"
+    if loss >= th["loss"]["red"] or (avg is not None and avg >= t["rtt"]["red"]) \
+            or (jitter is not None and jitter >= t["jitter"]["red"]):
+        return "red"
+    if loss >= th["loss"]["yellow"] or (avg is not None and avg >= t["rtt"]["yellow"]) \
+            or (jitter is not None and jitter >= t["jitter"]["yellow"]):
+        return "yellow"
+    return "green"
+
+
+def _nq_aggregate_sql(bucket_expr):
+    return f"""
+        SELECT {bucket_expr} AS t, target, SUM(sent) AS sent, SUM(recv) AS recv,
+               MIN(rtt_min) AS rtt_min,
+               SUM(rtt_avg * recv) / NULLIF(SUM(CASE WHEN rtt_avg IS NOT NULL THEN recv END), 0) AS rtt_avg,
+               MAX(rtt_max) AS rtt_max, MAX(rtt_p95) AS rtt_p95, AVG(jitter) AS jitter,
+               MAX(speedtest) AS speedtest
+        FROM minute WHERE ts >= ? GROUP BY t, target"""
+
+
+def _r(x, nd=2):
+    return None if x is None else round(x, nd)
+
+
+@app.route("/api/quality/series")
+def api_quality_series():
+    rng = request.args.get("range", "24h")
+    if rng not in NQ_RANGES:
+        return jsonify({"error": f"range musí být jedno z {', '.join(NQ_RANGES)}"}), 400
+    span, bucket = NQ_RANGES[rng]
+    now = int(time.time())
+    since = (now - span) // bucket * bucket
+    buckets = list(range(since, now // bucket * bucket + 1, bucket))
+    index = {t: i for i, t in enumerate(buckets)}
+    fields = ["loss", "min", "avg", "max", "p95", "jitter"]
+    series = {t: {f: [None] * len(buckets) for f in fields} for t in NQ_TARGETS}
+    speedtest = [0] * len(buckets)
+    try:
+        with _nq_db() as conn:
+            rows = conn.execute(_nq_aggregate_sql(f"ts / {bucket} * {bucket}"), (since,)).fetchall()
+            events = conn.execute(
+                "SELECT type, target, start, end, cause FROM events WHERE end IS NULL OR end >= ? ORDER BY start",
+                (since,)).fetchall()
+    except sqlite3.Error as exc:
+        return jsonify({"error": str(exc)}), 500
+    for row in rows:
+        i = index.get(row["t"])
+        if i is None or row["target"] not in series:
+            continue
+        s = series[row["target"]]
+        s["loss"][i] = _r(100.0 * (row["sent"] - row["recv"]) / row["sent"]) if row["sent"] else None
+        s["min"][i], s["avg"][i], s["max"][i] = _r(row["rtt_min"]), _r(row["rtt_avg"]), _r(row["rtt_max"])
+        s["p95"][i], s["jitter"][i] = _r(row["rtt_p95"]), _r(row["jitter"])
+        speedtest[i] = max(speedtest[i], row["speedtest"] or 0)
+    return jsonify({
+        "range": rng, "bucket_s": bucket, "buckets": buckets, "targets": series, "speedtest": speedtest,
+        "events": [dict(e) for e in events],
+    })
+
+
+@app.route("/api/quality/status")
+def api_quality_status():
+    now = time.time()
+    try:
+        th = _nq_thresholds()
+        with _nq_db() as conn:
+            meta = {r["key"]: r["value"] for r in conn.execute("SELECT key, value FROM meta")}
+            rows = conn.execute(_nq_aggregate_sql("0"), (int(now // 60 * 60) - STATUS_WINDOW,)).fetchall()
+            open_events = [dict(r) for r in conn.execute(
+                "SELECT type, target, start, cause FROM events WHERE end IS NULL ORDER BY start")]
+    except (OSError, ValueError, sqlite3.Error) as exc:
+        return jsonify({"color": "red", "label": "Bez dat", "reason": f"Chyba čtení dat: {exc}",
+                        "targets": {}}), 200
+    heartbeat = float(meta.get("heartbeat") or 0)
+    live = json.loads(meta.get("live") or "{}")
+    agg = {r["target"]: r for r in rows}
+
+    targets = {}
+    for name in NQ_TARGETS:
+        r = agg.get(name)
+        loss = 100.0 * (r["sent"] - r["recv"]) / r["sent"] if r and r["sent"] else None
+        avg, jitter = (r["rtt_avg"], r["jitter"]) if r else (None, None)
+        lv = live.get(name, {})
+        color = "red" if lv.get("down") else _nq_color(th, name, loss, avg, jitter)
+        targets[name] = {"color": color, "loss": _r(loss), "avg": _r(avg), "jitter": _r(jitter),
+                         "down": bool(lv.get("down")), "last_rtt": _r(lv.get("last_rtt"))}
+
+    best_public = min((targets[t]["color"] for t in NQ_PUBLIC), key=COLOR_RANK.get)
+    color = max([targets["router"]["color"], targets["isp-gateway"]["color"], best_public], key=COLOR_RANK.get)
+    if color == "green" and any(targets[t]["color"] == "red" for t in NQ_PUBLIC):
+        color = "yellow"
+
+    outages = [e for e in open_events if e["type"] == "outage"]
+    if now - heartbeat > STALE_AFTER:
+        color, reason = "red", f"Sběrač neposílá data {int(now - heartbeat)} s"
+    elif outages:
+        e = min(outages, key=lambda e: list(CAUSE_LABEL).index(e["cause"] or "unknown"))
+        reason = f"Výpadek: {CAUSE_LABEL.get(e['cause'], e['cause'])} ({e['target']}, {int(now - e['start'])} s)"
+    elif color != "green":
+        worst = max(NQ_TARGETS, key=lambda t: COLOR_RANK[targets[t]["color"]])
+        t = targets[worst]
+        reason = f"{worst}: loss {t['loss']} %, RTT {t['avg']} ms, jitter {t['jitter']} ms (5 min)"
+    else:
+        reason = "Všechny cíle v normě (5 min)"
+    return jsonify({
+        "color": color, "label": COLOR_LABEL[color], "reason": reason, "updated": heartbeat,
+        "gateway": live.get("gateway"), "targets": targets, "open_events": open_events, "thresholds": th,
+    })
+
+
+def _union_seconds(intervals, lo, hi):
+    total, cur_s, cur_e = 0.0, None, None
+    for s, e in sorted((max(s, lo), min(e, hi)) for s, e in intervals):
+        if e <= s:
+            continue
+        if cur_e is None or s > cur_e:
+            if cur_e is not None:
+                total += cur_e - cur_s
+            cur_s, cur_e = s, e
+        else:
+            cur_e = max(cur_e, e)
+    if cur_e is not None:
+        total += cur_e - cur_s
+    return total
+
+
+@app.route("/api/quality/events")
+def api_quality_events():
+    try:
+        days = float(request.args.get("days", "7"))
+    except ValueError:
+        return jsonify({"error": "parametr days musí být číslo"}), 400
+    now = time.time()
+    since = now - max(days, 7) * 86400
+    try:
+        with _nq_db() as conn:
+            rows = [dict(r) for r in conn.execute(
+                "SELECT id, type, target, start, end, cause, source FROM events"
+                " WHERE end IS NULL OR end >= ? ORDER BY start DESC", (since,))]
+    except sqlite3.Error as exc:
+        return jsonify({"error": str(exc)}), 500
+    for r in rows:
+        r["ongoing"] = r["end"] is None
+        r["duration_s"] = int((r["end"] or now) - r["start"])
+        r["cause_label"] = CAUSE_LABEL.get(r["cause"], r["cause"])
+
+    # dostupnost internetu: výpadky kromě těch, které se týkají jen jednoho veřejného cíle
+    link_down = [(r["start"], r["end"] or now) for r in rows if r["type"] == "outage" and r["cause"] != "target"]
+    summary = {}
+    for label, span in (("24h", 86400), ("7d", 604800)):
+        lo = now - span
+        down = _union_seconds(link_down, lo, now)
+        in_window = [r for r in rows if (r["end"] or now) >= lo]
+        summary[label] = {
+            "availability_pct": round(100 * (1 - down / span), 3),
+            "downtime_s": int(down),
+            "outages": sum(1 for r in in_window if r["type"] == "outage" and r["cause"] != "target"),
+            "degraded": sum(1 for r in in_window if r["type"] == "degraded"),
+        }
+    cutoff = now - days * 86400
+    return jsonify({"summary": summary, "events": [r for r in rows if (r["end"] or now) >= cutoff]})
 
 
 @app.route("/")
