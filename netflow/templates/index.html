@@ -484,9 +484,8 @@ function shadeBands(d) {
   const n = d.buckets.length, t0 = d.buckets[0], b = d.bucket_s;
   const idx = t => Math.min(n - 1, Math.max(0, Math.floor((t - t0) / b)));
   const bands = [];
-  if (b <= 300) {  // u hodinových bucketů by speedtest (každých 30 min) podbarvil všechno
-    d.speedtest.forEach((v, i) => { if (v) bands.push({ from: i, to: i, color: '#6b72801a' }); });
-  }
+  // speedtest (03:00 a 15:00) — podbarví jen buckety, kde měření skutečně běželo
+  d.speedtest.forEach((v, i) => { if (v) bands.push({ from: i, to: i, color: '#6b72801a' }); });
   for (const e of d.events) {
     if (e.type === 'outage' && e.cause === 'target') continue;
     const end = e.end ?? Date.now() / 1000;
