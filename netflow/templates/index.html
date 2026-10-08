@@ -72,11 +72,19 @@
   tr.muted td { color:var(--muted); }
   td.num { font-variant-numeric:tabular-nums; }
   #jitter-chart { max-height:180px; }
+  .title-row { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; margin-bottom:4px; }
+  .title-row h1 { margin:0; }
+  .dl-btn { display:inline-block; padding:6px 12px; border:1px solid var(--border); border-radius:6px; background:var(--card-bg);
+            color:inherit; text-decoration:none; font-size:.85rem; white-space:nowrap; }
+  .dl-btn:hover { border-color:var(--accent); color:var(--accent); }
   @media (max-width:600px) { h1 { font-size:1.2rem; } .card { padding:10px; } }
 </style>
 </head>
 <body>
-  <h1>Dejva NET — Traffic Monitor</h1>
+  <div class="title-row">
+    <h1>Dejva NET — Traffic Monitor</h1>
+    <a class="dl-btn" href="download/csv" download title="Export výpadků, měření rychlosti a hodinové kvality linky">⬇ Stáhnout CSV</a>
+  </div>
   <div class="subtitle" id="status">Připojuji…</div>
   <div class="nq-status" id="nq-status" role="status" aria-live="polite">
     <div class="nq-main"><span class="dot big" id="nq-dot"></span><span id="nq-label">Stav linky…</span></div>
@@ -653,6 +661,8 @@ async function loadSpeed() {
     const labels = data.map(d => new Date(d.timestamp).toLocaleString('cs-CZ', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }));
     const downloads = data.map(d => d.download_mbps);
     const uploads = data.map(d => d.upload_mbps);
+    const o2Downloads = data.map(d => d.o2_download_mbps || null);
+    const o2Uploads = data.map(d => d.o2_upload_mbps || null);
 
     if (!speedChart) {
       speedChart = new Chart(document.getElementById('speed-chart'), {
@@ -662,6 +672,8 @@ async function loadSpeed() {
           datasets: [
             { label: 'Download (Mbps)', data: downloads, backgroundColor: '#5b8def' },
             { label: 'Upload (Mbps)', data: uploads, backgroundColor: '#34d399' },
+            { label: 'O2 Praha download (Mbps)', data: o2Downloads, backgroundColor: '#a5bff5' },
+            { label: 'O2 Praha upload (Mbps)', data: o2Uploads, backgroundColor: '#9fe8c9' },
           ],
         },
         options: { responsive: true, scales: { y: { beginAtZero: true, title: { display: true, text: 'Mbps' } }, x: { ticks: { maxTicksLimit: 8 } } }, plugins: { legend: { position: 'bottom' } } }
@@ -670,6 +682,8 @@ async function loadSpeed() {
       speedChart.data.labels = labels;
       speedChart.data.datasets[0].data = downloads;
       speedChart.data.datasets[1].data = uploads;
+      speedChart.data.datasets[2].data = o2Downloads;
+      speedChart.data.datasets[3].data = o2Uploads;
       speedChart.update();
     }
   } catch (e) {

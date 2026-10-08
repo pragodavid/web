@@ -12,10 +12,11 @@ import time
 from datetime import datetime, timedelta
 
 import requests
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, Response, jsonify, render_template, request
 
 NETFLOW_DIR = "/home/dejvaval/netflow"
 NETQUALITY_DIR = "/home/dejvaval/netquality"
+ANTENNA_SIGNAL_LOG = "/home/dejvaval/antenna_signal.log"
 DHCP_REFRESH_INTERVAL = 600       # 10 minut
 LIVE_POLL_INTERVAL = 3            # sekund
 EXTERNAL_REFRESH_INTERVAL = 86400  # 24 hodin
@@ -456,6 +457,9 @@ def api_quality_speed():
                 "download_mbps": float(row.get("download_mbps") or 0),
                 "upload_mbps": float(row.get("upload_mbps") or 0),
                 "ping_ms": float(row.get("ping_ms") or 0),
+                "o2_download_mbps": float(row.get("o2_download_mbps") or 0),
+                "o2_upload_mbps": float(row.get("o2_upload_mbps") or 0),
+                "o2_ping_ms": float(row.get("o2_ping_ms") or 0),
             })
         except ValueError:
             continue
@@ -684,6 +688,160 @@ def api_quality_events():
         }
     cutoff = now - days * 86400
     return jsonify({"summary": summary, "events": [r for r in rows if (r["end"] or now) >= cutoff]})
+
+
+# ---------- Export CSV (stejný formát jako ~/vyvadky_o2_log.csv) ----------
+
+CSV_COLUMNS = ["datum", "čas začátek", "čas konec", "typ", "délka", "cíle", "příčina",
+               "packet loss", "latence", "jitter", "rychlost internetu", "5G signál", "4G signál"]
+CSV_TARGET_NAMES = {"router": "domácí router", "isp-gateway": "brána O2",
+                    "1.1.1.1": "1.1.1.1 (Cloudflare)", "8.8.8.8": "8.8.8.8 (Google)"}
+# výměna hlavního routeru na doporučení podpory O2 (není součástí reklamace)
+CSV_INTERVENTION = (datetime(2026, 9, 23, 23, 0).timestamp(), datetime(2026, 9, 24, 0, 0).timestamp())
+# ručně ověřené příčiny konkrétních výpadků (začátek incidentu v intervalu => příčina), viz ~/netquality/notes.md
+CSV_CAUSE_OVERRIDES = [
+    (datetime(2026, 10, 2, 14, 19).timestamp(), datetime(2026, 10, 2, 14, 20).timestamp(),
+     "O2 přenastavilo anténu – konflikt IP adres (WAN 192.168.0.x vs LAN)"),
+]
+CSV_QUALITY_SQL = """
+    SELECT SUM(sent), SUM(recv), SUM(rtt_avg * recv), SUM(CASE WHEN rtt_avg IS NOT NULL THEN recv END), AVG(jitter)
+    FROM minute WHERE target IN ('1.1.1.1', '8.8.8.8')"""
+
+
+def _csv_num(v, unit):
+    return f"{v:.1f}".replace(".", ",") + unit
+
+
+def _csv_quality(sent, recv, rtt_sum, rtt_n, jitter):
+    if not sent:
+        return ["", "", ""]
+    return [_csv_num(100 * (sent - recv) / sent, " %"),
+            _csv_num(rtt_sum / rtt_n, " ms") if rtt_n else "",
+            _csv_num(jitter, " ms") if jitter is not None else ""]
+
+
+def _csv_hms(sec):
+    sec = int(round(sec))
+    return f"{sec // 3600}:{sec % 3600 // 60:02d}:{sec % 60:02d}"
+
+
+def _csv_speeds():
+    path = os.path.join(NETQUALITY_DIR, "speed.csv")
+    if not os.path.exists(path):
+        return []
+    with open(path, newline="") as f:
+        return [(datetime.fromisoformat(r["timestamp_iso"]).timestamp(), r) for r in csv.DictReader(f)]
+
+
+def _csv_antenna_signal():
+    """Řádky z ~/antenna_signal.log: "[YYYY-MM-DD HH:MM:SS] 5G: ... | 4G: ..." -> (ts, 5G, 4G)."""
+    if not os.path.exists(ANTENNA_SIGNAL_LOG):
+        return []
+    out = []
+    with open(ANTENNA_SIGNAL_LOG, encoding="utf-8", errors="replace") as f:
+        for line in f:
+            try:
+                stamp, rest = line.strip()[1:].split("] ", 1)
+                g5, g4 = (part.strip() for part in rest.split("|", 1))
+                ts = datetime.strptime(stamp, "%Y-%m-%d %H:%M:%S").timestamp()
+            except ValueError:
+                continue
+            out.append((ts, g5.removeprefix("5G:").strip(), g4.removeprefix("4G:").strip()))
+    return out
+
+
+def build_quality_csv_rows():
+    """Výpadky (sloučené incidenty), měření rychlosti a hodinová kvalita linky, seřazené podle času."""
+    speeds = _csv_speeds()
+    rows = []
+    with _nq_db() as conn:
+        def quality(t0, t1):
+            return _csv_quality(*conn.execute(CSV_QUALITY_SQL + " AND ts >= ? AND ts <= ?",
+                                              (int(t0 // 60 * 60), int(t1))).fetchone())
+
+        incidents = []
+        for t, s, e, cause in conn.execute(
+                "SELECT target, start, end, cause FROM events WHERE type = 'outage' AND end IS NOT NULL ORDER BY start"):
+            if incidents and s <= incidents[-1]["end"] + 10:
+                x = incidents[-1]
+                x["end"] = max(x["end"], e)
+                x["causes"].add(cause)
+                x["targets"].add(t)
+            else:
+                incidents.append({"start": s, "end": e, "causes": {cause}, "targets": {t}})
+
+        for x in incidents:
+            cs = x["causes"]
+            if "lan" in cs:
+                why = "nedostupný domácí router – pravděpodobně výpadek el. energie (není součástí reklamace)"
+            elif "isp_access" in cs:
+                why = "nedostupná brána poskytovatele (O2)"
+            elif "isp_upstream" in cs:
+                why = "nedostupný internet"
+            else:
+                why = "nedostupný jen jeden veřejný server – není výpadek připojení (není součástí reklamace)"
+            override = next((c for lo, hi, c in CSV_CAUSE_OVERRIDES if lo <= x["start"] < hi), None)
+            if override:
+                why = override
+            if CSV_INTERVENTION[0] <= x["start"] < CSV_INTERVENTION[1]:
+                why += " – výměna hlavního routeru na doporučení podpory O2 (není součástí reklamace)"
+            if "lan" not in cs and not override and any(-5 <= x["start"] - t <= 150 for t, _ in speeds):
+                why += " – začal během měření rychlosti"
+            a, b = datetime.fromtimestamp(x["start"]), datetime.fromtimestamp(x["end"])
+            end = b.strftime("%H:%M:%S") if b.date() == a.date() else b.strftime("%d.%m.%Y %H:%M:%S")
+            rows.append((x["start"], [a.strftime("%d.%m.%Y"), a.strftime("%H:%M:%S"), end, "výpadek",
+                                      _csv_hms(x["end"] - x["start"]),
+                                      ", ".join(CSV_TARGET_NAMES[t] for t in NQ_TARGETS if t in x["targets"]), why]
+                         + quality(x["start"], x["end"]) + [""]))
+
+        for ts, r in speeds:
+            a = datetime.fromtimestamp(ts)
+            parts = []
+            for prefix, name in (("", ""), ("o2_", "server O2 Praha: ")):
+                if r.get(prefix + "download_mbps"):
+                    parts.append(f"{name}stahování {r[prefix + 'download_mbps'].replace('.', ',')} Mbit/s, "
+                                 f"odesílání {r[prefix + 'upload_mbps'].replace('.', ',')} Mbit/s, "
+                                 f"odezva {r[prefix + 'ping_ms'].replace('.', ',')} ms")
+            val = "; ".join(parts) or "měření se nezdařilo"
+            rows.append((ts, [a.strftime("%d.%m.%Y"), a.strftime("%H:%M:%S"), "", "měření", "", "", ""]
+                         + quality(ts, ts + 120) + [val]))
+
+        # hodinová kvalita linky; poslední (neúplná) hodina se vynechává
+        current_hour = int(time.time()) // 3600 * 3600
+        for h, *q in conn.execute(
+                "SELECT ts / 3600 * 3600 AS h, SUM(sent), SUM(recv), SUM(rtt_avg * recv),"
+                " SUM(CASE WHEN rtt_avg IS NOT NULL THEN recv END), AVG(jitter)"
+                " FROM minute WHERE target IN ('1.1.1.1', '8.8.8.8') AND speedtest = 0 AND ts < ?"
+                " GROUP BY h ORDER BY h", (current_hour,)):
+            if not q[0]:
+                continue
+            a, b = datetime.fromtimestamp(h), datetime.fromtimestamp(h + 3600)
+            rows.append((h - 0.5, [a.strftime("%d.%m.%Y"), a.strftime("%H:%M:%S"), b.strftime("%H:%M:%S"),
+                                   "kvalita linky", "1:00:00", "1.1.1.1 (Cloudflare), 8.8.8.8 (Google)", ""]
+                         + _csv_quality(*q) + [""]))
+
+    for ts, g5, g4 in _csv_antenna_signal():
+        a = datetime.fromtimestamp(ts)
+        rows.append((ts, [a.strftime("%d.%m.%Y"), a.strftime("%H:%M:%S"), "", "signál antény",
+                          "", "", "", "", "", "", "", g5, g4]))
+    rows.sort(key=lambda r: r[0])
+    return [r + [""] * (len(CSV_COLUMNS) - len(r)) for _, r in rows]
+
+
+@app.route("/download/csv")
+def download_csv():
+    try:
+        rows = build_quality_csv_rows()
+    except (OSError, ValueError, sqlite3.Error) as exc:
+        return jsonify({"error": str(exc)}), 500
+    buf = io.StringIO()
+    w = csv.writer(buf, delimiter=";")
+    w.writerow(CSV_COLUMNS)
+    w.writerows(rows)
+    filename = f"netquality_export_{datetime.now():%Y-%m-%d}.csv"
+    return Response("\ufeff" + buf.getvalue(), content_type="text/csv; charset=utf-8",
+                    headers={"Content-Disposition": f'attachment; filename="{filename}"',
+                             "Cache-Control": "no-store"})
 
 
 @app.route("/")
